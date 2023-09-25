@@ -5,4 +5,7 @@
     <!--<color name="appname_color">#2873BC</color>-->
     <color name="appname_color">#D0BCFF</color>
     <color name="darkblue">#000E16</color>
+    <color name="navbar_color">#211F26</color>
+    <color name="icon_color">#E8DEF8</color>
+    <color name="text_color">#E8DEF8</color>
 </resources>
