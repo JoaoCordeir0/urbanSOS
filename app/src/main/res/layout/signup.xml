@@ -6,13 +6,13 @@
     android:gravity="center_horizontal"
     android:orientation="vertical"
     android:background="@color/darkblue"
-    android:padding="30dp">
+    android:paddingRight="30dp"
+    android:paddingLeft="30dp">
 
     <ImageView
         android:id="@+id/imageView2"
         android:layout_width="153dp"
         android:layout_height="167dp"
-        android:layout_marginTop="-30dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -48,7 +48,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
         android:hint="@string/email" >
         <com.google.android.material.textfield.TextInputEditText
@@ -63,7 +63,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
         android:hint="@string/cpf" >
         <com.google.android.material.textfield.TextInputEditText
@@ -78,7 +78,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
         android:hint="@string/password" >
         <com.google.android.material.textfield.TextInputEditText
@@ -93,7 +93,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
         android:hint="@string/passwordconfirm" >
         <com.google.android.material.textfield.TextInputEditText
