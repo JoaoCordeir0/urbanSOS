@@ -31,5 +31,5 @@ public class Main extends AppCompatActivity {
 
     public void screenForgotPassword(View view) { setContentView(R.layout.forgotpassword); }
     public void screenLogin(View view) { setContentView(R.layout.login); }
-    public void screenSingup(View view) { setContentView(R.layout.signup); }
+    public void screenSignup(View view) { setContentView(R.layout.signup); }
 }
