@@ -64,6 +64,7 @@
     <Button
         style="@style/Widget.Material3.Button.ElevatedButton"
         android:id="@+id/btn_login_1"
+        android:onClick="screenHome"
         android:layout_width="350px"
         android:layout_height="60dp"
         android:backgroundTint="#1D1B20"
