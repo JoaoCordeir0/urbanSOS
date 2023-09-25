@@ -1,7 +1,7 @@
 <resources>
-    <string name="app_name">urbanSOS</string>
-    <string name="app_name_login">Log In urbanSOS</string>
-    <string name="app_name_signup">Sign Up urbanSOS</string>
+    <string name="app_name">UrbanSOS</string>
+    <string name="app_name_login">Log In UrbanSOS</string>
+    <string name="app_name_signup">Sign Up UrbanSOS</string>
     <string name="app_name_recoverpassword">Recover Password</string>
     <string name="username">Username:</string>
     <string name="password">Password:</string>
