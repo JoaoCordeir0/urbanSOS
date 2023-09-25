@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">urbanSOS</string>
+    <string name="app_name_login">Log In urbanSOS</string>
+    <string name="app_name_signup">Sign Up urbanSOS</string>
+    <string name="app_name_recoverpassword">Recover Password</string>
+    <string name="username">Username:</string>
+    <string name="password">Password:</string>
+    <string name="login">Log In</string>
+    <string name="signup">Sing Up</string>
+    <string name="forgotpassword">Forgot you password?</string>
+    <string name="recover">Recover</string>
+    <string name="rememberme">Remember me</string>
+    <string name="email">Email:</string>
+    <string name="name">Name:</string>
+    <string name="cpf">CPF:</string>
+    <string name="passwordconfirm">Confirm password:</string>
+</resources>
