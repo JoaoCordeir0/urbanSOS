@@ -1,6 +1,8 @@
 package br.com.urbansos;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -11,8 +13,6 @@ public class Main extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Seta a tela em fullscrean
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.preloader);
 
         try
@@ -32,9 +32,5 @@ public class Main extends AppCompatActivity {
     public void screenForgotPassword(View view) { setContentView(R.layout.forgotpassword); }
     public void screenLogin(View view) { setContentView(R.layout.login); }
     public void screenSignup(View view) { setContentView(R.layout.signup); }
-    public void screenHome(View view)
-    {
-        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        setContentView(R.layout.home);
-    }
+    public void screenHome(View view) { setContentView(R.layout.home); }
 }

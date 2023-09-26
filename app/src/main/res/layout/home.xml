@@ -4,27 +4,26 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:gravity="center_horizontal"
-    android:background="@color/darkblue">
+    android:gravity="center_horizontal">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="80dp">
+        android:layout_height="140dp">
         <androidx.coordinatorlayout.widget.CoordinatorLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
             <com.google.android.material.appbar.AppBarLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:backgroundTint="@color/navbar_color">
+                android:layout_height="match_parent" >
 
             <com.google.android.material.appbar.MaterialToolbar
+                style="@style/Widget.Material3.AppBarLayout"
                 android:id="@+id/topAppBar"
                 android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
+                android:layout_height="140dp"
                 app:title="@string/myreports"
-                app:titleTextColor="@color/text_color"
+                app:titleMarginTop="50dp"
                 app:menu="@menu/top_app_bar" />
             </com.google.android.material.appbar.AppBarLayout>
 
@@ -43,19 +42,18 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:orientation="vertical"
-        android:padding="10dp">
+        android:padding="10dp"
+        android:backgroundTint="@color/white">
 
     </LinearLayout>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
+        style="@style/Widget.Material3.BottomAppBar"
         android:id="@+id/bottom_navigation"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:background="@color/navbar_color"
-        app:menu="@menu/bottom_navigation_menu"
-        app:itemIconTint="@color/icon_color"
-        app:itemTextColor="@color/text_color"/>
+        app:menu="@menu/bottom_navigation_menu" />
 
 </LinearLayout>
 

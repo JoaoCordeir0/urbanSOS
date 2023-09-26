@@ -5,7 +5,6 @@
     android:layout_height="match_parent"
     android:gravity="center_horizontal"
     android:orientation="vertical"
-    android:background="@color/darkblue"
     android:paddingRight="30dp"
     android:paddingLeft="30dp">
 
@@ -20,10 +19,11 @@
 
     <TextView
         android:id="@+id/textView3"
+        style="@style/Widget.Material3.Button.ElevatedButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/app_name_signup"
-        android:textColor="@color/appname_color"
+        android:padding="0dp"
         android:textSize="34sp"/>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -106,7 +106,6 @@
         android:id="@+id/btn_singup_1"
         android:layout_width="450px"
         android:layout_height="60dp"
-        android:backgroundTint="#1D1B20"
         android:layout_marginTop="20dp"
         android:textStyle="bold"
         android:text="@string/signup"
@@ -117,8 +116,7 @@
         android:id="@+id/btn_login_2"
         android:onClick="screenLogin"
         android:layout_width="450px"
-        android:layout_height="wrap_content"
-        android:backgroundTint="@color/darkblue"
+        android:layout_height="60dp"
         android:layout_marginTop="20dp"
         android:textStyle="bold"
         android:text="@string/login"
