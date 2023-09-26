@@ -29,4 +29,12 @@
         <item name="colorOnSurfaceInverse">@color/md_theme_dark_inverseOnSurface</item>
         <item name="colorPrimaryInverse">@color/md_theme_dark_inversePrimary</item>
     </style>
+
+    <style name="navtop">
+        <item name="android:background">@color/md_theme_dark_background</item>
+    </style>
+
+    <style name="navbottom">
+        <item name="android:background">@color/app_base_color_dark</item>
+    </style>
 </resources>

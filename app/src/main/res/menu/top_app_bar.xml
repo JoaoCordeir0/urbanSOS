@@ -1,13 +1,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/notification"
-        android:icon="@drawable/notification_icon"
+        android:icon="@drawable/notifications"
         android:title="@string/notification"
         app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/user"
-        android:icon="@drawable/user_icon"
+        android:icon="@drawable/account"
         android:title="@string/username"
         app:showAsAction="ifRoom" />
 </menu>

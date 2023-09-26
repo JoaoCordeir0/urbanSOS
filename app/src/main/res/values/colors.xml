@@ -3,6 +3,9 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
+    <color name="app_base_color_light">#FFFBFE</color>
+    <color name="app_base_color_dark">#2C2831</color>
+
     <color name="seed">#6750A4</color>
     <color name="md_theme_light_primary">#6750A4</color>
     <color name="md_theme_light_onPrimary">#FFFFFF</color>
@@ -20,7 +23,7 @@
     <color name="md_theme_light_onError">#FFFFFF</color>
     <color name="md_theme_light_errorContainer">#F9DEDC</color>
     <color name="md_theme_light_onErrorContainer">#410E0B</color>
-    <color name="md_theme_light_outline">#79747E</color>
+    <color name="md_theme_light_outline">#6750A4</color> <!-- <color name="md_theme_light_outline">#79747E</color> -->
     <color name="md_theme_light_background">#E7E7E7</color> <!--  <color name="md_theme_light_background">#FFFBFE</color>-->
     <color name="md_theme_light_onBackground">#1C1B1F</color>
     <color name="md_theme_light_surface">#FFFBFE</color>
@@ -34,6 +37,7 @@
     <color name="md_theme_light_surfaceTint">#6750A4</color>
     <color name="md_theme_light_outlineVariant">#CAC4D0</color>
     <color name="md_theme_light_scrim">#000000</color>
+
     <color name="md_theme_dark_primary">#D0BCFF</color>
     <color name="md_theme_dark_onPrimary">#381E72</color>
     <color name="md_theme_dark_primaryContainer">#4F378B</color>
@@ -50,7 +54,7 @@
     <color name="md_theme_dark_onError">#601410</color>
     <color name="md_theme_dark_errorContainer">#8C1D18</color>
     <color name="md_theme_dark_onErrorContainer">#F9DEDC</color>
-    <color name="md_theme_dark_outline">#938F99</color>
+    <color name="md_theme_dark_outline">#D0BCFF</color> <!-- <color name="md_theme_dark_outline">#938F99</color> -->
     <color name="md_theme_dark_background">#000E16</color> <!-- <color name="md_theme_dark_background">#1C1B1F</color> -->
     <color name="md_theme_dark_onBackground">#E6E1E5</color>
     <color name="md_theme_dark_surface">#1C1B1F</color>
