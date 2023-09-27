@@ -40,4 +40,13 @@
     <style name="navbottom">
         <item name="android:background">@color/app_base_color_light</item>
     </style>
+
+    <style name="card_report">
+        <item name="android:background">@color/app_base_color_light</item>
+    </style>
+
+    <style name="btn_account_settings">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:background">@color/app_base_color_light</item>
+    </style>
 </resources>
