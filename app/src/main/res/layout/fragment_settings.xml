@@ -81,4 +81,22 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+        <Button
+            style="@style/Widget.Material3.Button.ElevatedButton.Icon"
+            android:id="@+id/btn_logout"
+            android:onClick="screenLogin"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:text="Log out"
+            android:textStyle="bold"
+            android:layout_marginTop="295dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            app:icon="@drawable/logout" />
+
+    </LinearLayout>
+
 </FrameLayout>
