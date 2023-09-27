@@ -9,7 +9,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
+import android.widget.Toolbar;
 
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 
@@ -45,8 +48,9 @@ public class Main extends AppCompatActivity {
     {
         setContentView(R.layout.main);
 
+        // Responsável por identificar os cliques nos itens da navbar e carregar o fragmento da página
         BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
-        setFragment(new HomeFragment());
+        setFragment(new HomeFragment(), "My Reports");
         bottomNav.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -54,17 +58,17 @@ public class Main extends AppCompatActivity {
 
                 if (id == R.id.fragment_home)
                 {
-                    setFragment(new HomeFragment());
+                    setFragment(new HomeFragment(), "My Reports");
                     return true;
                 }
                 else if (id == R.id.fragment_camera)
                 {
-                    setFragment(new CameraFragment());
+                    setFragment(new CameraFragment(), "Camera");
                     return true;
                 }
                 else if (id == R.id.fragment_settings)
                 {
-                    setFragment(new SettingsFragment());
+                    setFragment(new SettingsFragment(), "Settings");
                     return true;
                 }
                 return false;
@@ -72,7 +76,12 @@ public class Main extends AppCompatActivity {
         });
     }
 
-    void setFragment(Fragment fragment){
+    void setFragment(Fragment fragment, String title)
+    {
+        // Seta o titulo da página
+        ((MaterialToolbar) findViewById(R.id.topAppBar)).setTitle(title);
+
+        // Troca o fragmento
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.main_frame_layout, fragment);
         fragmentTransaction.addToBackStack(null);
