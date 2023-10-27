@@ -10,25 +10,32 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
 import com.google.android.material.appbar.MaterialToolbar;
-import com.google.android.material.bottomappbar.BottomAppBar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
+import com.google.android.material.textfield.TextInputLayout;
 
 import br.com.urbansos.fragments.CameraFragment;
 import br.com.urbansos.fragments.HomeFragment;
 import br.com.urbansos.fragments.NotificationFragment;
 import br.com.urbansos.fragments.SettingsFragment;
 
+import br.com.urbansos.controllers.Login;
+import br.com.urbansos.models.User;
+
 public class Main extends AppCompatActivity {
 
+    private RequestQueue requestQueue;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.preloader);
+
+        requestQueue = Volley.newRequestQueue(getApplicationContext());
 
         try
         {
@@ -110,4 +117,23 @@ public class Main extends AppCompatActivity {
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
     }
+
+    public void authLogin(View view)
+    {
+        TextInputLayout textInputLayoutUser = findViewById(R.id.input_username);
+        TextInputLayout textInputLayoutPass = findViewById(R.id.input_password);
+
+        String username = String.valueOf(textInputLayoutUser.getEditText().getText());
+        String password = String.valueOf(textInputLayoutPass.getEditText().getText());
+
+        if (Login.validateLogin(new User("", "", "", username, password), requestQueue))
+        {
+            this.screenMain(view);
+        }
+        else
+        {
+            Toast.makeText(Main.this, "Incorrect username or password!", Toast.LENGTH_SHORT).show();
+        }
+    }
+
 }
