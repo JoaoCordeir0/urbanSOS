@@ -1,2 +1,6 @@
-# urbansos_app
-Repósitorio para armazenar o app mobile UrbanSOS
+# UrbanSOS
+Repósitorio do App android UrbanSOS
+
+Layout by Material design 3
+
+Backend do App em NodeJs: https://github.com/JoaoCordeir0/urbanSOS_api
