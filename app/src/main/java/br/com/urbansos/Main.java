@@ -24,7 +24,7 @@ import br.com.urbansos.fragments.HomeFragment;
 import br.com.urbansos.fragments.NotificationFragment;
 import br.com.urbansos.fragments.SettingsFragment;
 
-import br.com.urbansos.controllers.Login;
+import br.com.urbansos.controllers.AuthenticationController;
 import br.com.urbansos.models.User;
 
 public class Main extends AppCompatActivity {
@@ -126,7 +126,7 @@ public class Main extends AppCompatActivity {
         String username = String.valueOf(textInputLayoutUser.getEditText().getText());
         String password = String.valueOf(textInputLayoutPass.getEditText().getText());
 
-        if (Login.validateLogin(new User("", "", "", username, password), requestQueue))
+        if (AuthenticationController.validateLogin(new User("", "", "", username, password), requestQueue))
         {
             this.screenMain(view);
         }
