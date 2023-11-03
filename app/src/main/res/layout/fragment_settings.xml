@@ -14,8 +14,8 @@
             android:id="@+id/btn_account"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:text="João Victor Cordeiro"
             android:textStyle="bold"
+            android:text="Aqui vai o nome do usuário"
             android:layout_marginTop="7dp"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
@@ -87,7 +87,7 @@
         <Button
             style="@style/Widget.Material3.Button.ElevatedButton.Icon"
             android:id="@+id/btn_logout"
-            android:onClick="screenLogin"
+            android:onClick="logout"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:text="Log out"

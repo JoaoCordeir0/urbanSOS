@@ -67,6 +67,7 @@
         android:layout_marginBottom="10dp"
         android:hint="@string/cpf" >
         <com.google.android.material.textfield.TextInputEditText
+            android:inputType="number"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </com.google.android.material.textfield.TextInputLayout>
@@ -108,6 +109,7 @@
     <Button
         style="@style/Widget.Material3.Button.ElevatedButton"
         android:id="@+id/btn_singup_1"
+        android:onClick="authSignup"
         android:layout_width="450px"
         android:layout_height="60dp"
         android:layout_marginTop="20dp"
@@ -125,5 +127,13 @@
         android:textStyle="bold"
         android:text="@string/login"
         android:textSize="18dp"/>
+
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+        android:id="@+id/progressindicator_signup"
+        android:visibility="invisible"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:layout_marginTop="-135dp"/>
 
 </LinearLayout>

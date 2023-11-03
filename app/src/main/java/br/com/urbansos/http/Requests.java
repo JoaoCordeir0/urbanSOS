@@ -1,19 +1,20 @@
-package br.com.urbansos.models;
+package br.com.urbansos.http;
 
+import android.util.Log;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.UnsupportedEncodingException;
+import br.com.urbansos.interfaces.IVolleyCallback;
 
-public class HttpRequests {
+public class Requests {
     private String urlApi = "https://api.urbansos.com.br";
 
-    public JsonObjectRequest sendRequestPost(String path, JSONObject jsonObject, IVolleyCallback callback) throws JSONException, UnsupportedOperationException {
+    public JsonObjectRequest sendRequestPost(String path, JSONObject jsonObject, IVolleyCallback callback) throws UnsupportedOperationException
+    {
         final String requestBody = jsonObject.toString();
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.POST,
@@ -31,8 +32,14 @@ public class HttpRequests {
                 },
                 new Response.ErrorListener() {
                     @Override
-                    public void onErrorResponse(VolleyError error) {
-                        callback.onError(error.toString());
+                    public void onErrorResponse(VolleyError err) {
+                        try {
+                            JSONObject response = new JSONObject();
+                            response.put("message", "Internal error!");
+                            callback.onError(response);
+                        } catch (JSONException e) {
+                            throw new RuntimeException(e);
+                        }
                     }
                 }
         ) {

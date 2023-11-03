@@ -46,4 +46,9 @@
         <item name="android:textColor">@color/white</item>
         <item name="android:backgroundTint">@color/md_theme_dark_background</item>
     </style>
+
+    <style name="alertDialog" parent="@style/MaterialAlertDialog.Material3">
+        <item name="android:background">@color/app_base_color_dark</item>
+    </style>
+
 </resources>

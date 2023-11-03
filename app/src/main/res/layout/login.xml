@@ -58,6 +58,7 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <CheckBox
+        android:id="@+id/ckeckbox_rememberme"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/rememberme" />
@@ -72,6 +73,14 @@
         android:textStyle="bold"
         android:text="@string/login"
         android:textSize="18dp"/>
+
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+        android:id="@+id/progressindicator_login"
+        android:visibility="invisible"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:layout_marginTop="-55dp"/>
 
     <LinearLayout
         android:layout_width="match_parent"

@@ -5,50 +5,65 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
-
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.Toast;
-
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
+import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.google.android.material.textfield.TextInputLayout;
-
+import org.json.JSONException;
+import org.json.JSONObject;
+import br.com.urbansos.functions.Functions;
 import br.com.urbansos.fragments.CameraFragment;
 import br.com.urbansos.fragments.HomeFragment;
 import br.com.urbansos.fragments.NotificationFragment;
 import br.com.urbansos.fragments.SettingsFragment;
-
-import br.com.urbansos.controllers.AuthenticationController;
-import br.com.urbansos.models.User;
+import br.com.urbansos.http.Requests;
+import br.com.urbansos.interfaces.IVolleyCallback;
 
 public class Main extends AppCompatActivity {
-
     private RequestQueue requestQueue;
+    private SharedPreferences prefsAuth;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.preloader);
 
+        // Instância singleton do Volley
         requestQueue = Volley.newRequestQueue(getApplicationContext());
 
-        try
-        {
-            Handler handler = new Handler();
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run()
+        // Atribuição do cache de autenticação na constante prefsAuth
+        prefsAuth = getSharedPreferences(getString(R.string.preferences_file_auth), Context.MODE_PRIVATE);
+
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run()
+            {
+                try
                 {
-                    setContentView(R.layout.login);
+                    // Checa se o usuário possuí cache de autenticação
+                    if (Functions.verifyCachedAuth(prefsAuth))
+                    {
+                        screenMain(new View(getApplicationContext()));
+                    }
+                } catch (Exception ex)
+                {
+                    screenLogin(new View(getApplicationContext()));
                 }
-            }, 3000);
-        }
-        catch (Exception ex) {}
+            }
+        }, 1000);
     }
 
     public void screenForgotPassword(View view) { setContentView(R.layout.forgotpassword); }
@@ -118,22 +133,120 @@ public class Main extends AppCompatActivity {
         fragmentTransaction.commit();
     }
 
-    public void authLogin(View view)
+    public void authLogin(View view) throws Exception
     {
-        TextInputLayout textInputLayoutUser = findViewById(R.id.input_username);
-        TextInputLayout textInputLayoutPass = findViewById(R.id.input_password);
+        Button btnLogin = findViewById(R.id.btn_login_1);
+        CircularProgressIndicator progressIndicator = findViewById(R.id.progressindicator_login);
 
-        String username = String.valueOf(textInputLayoutUser.getEditText().getText());
-        String password = String.valueOf(textInputLayoutPass.getEditText().getText());
+        String username = String.valueOf(((TextInputLayout) findViewById(R.id.input_username)).getEditText().getText());
+        String password = String.valueOf(((TextInputLayout) findViewById(R.id.input_password)).getEditText().getText());
+        Boolean rememberme = ((CheckBox) findViewById(R.id.ckeckbox_rememberme)).isChecked();
 
-        if (AuthenticationController.validateLogin(new User("", "", "", username, password), requestQueue))
+        if (username.equals("") || password.equals(""))
         {
-            this.screenMain(view);
+            Functions.alert(Main.this, "Warning", "Fill in all the information!", "Try again",true);
+            return;
         }
-        else
-        {
-            Toast.makeText(Main.this, "Incorrect username or password!", Toast.LENGTH_SHORT).show();
-        }
+
+        btnLogin.setVisibility(View.INVISIBLE);
+        progressIndicator.setVisibility(View.VISIBLE);
+
+        // Dispara a requisição do login
+        requestQueue.add((new Requests()).sendRequestPost("/user/login", Functions.getParamsLogin(username, password), new IVolleyCallback() {
+            @Override
+            public void onSuccess(JSONObject response) throws JSONException
+            {
+                try
+                {
+                    if (Functions.validateLogin(response, prefsAuth, rememberme))
+                        screenMain(view);
+                }
+                catch (Exception e)
+                {
+                    progressIndicator.setVisibility(View.INVISIBLE);
+                    btnLogin.setVisibility(View.VISIBLE);
+                    Functions.alert(Main.this, "Warning", response.getString("message"), "Try again",true);
+                }
+            }
+            @Override
+            public void onError(JSONObject response) throws JSONException {
+                Functions.alert(Main.this, "Error", response.getString("message"), "Try again",true);
+            }
+        }));
     }
 
+    public void authSignup(View view) throws Exception
+    {
+        Button btnSignup = findViewById(R.id.btn_singup_1);
+        CircularProgressIndicator progressIndicator = findViewById(R.id.progressindicator_signup);
+
+        String name = String.valueOf(((TextInputLayout) findViewById(R.id.input_name)).getEditText().getText());
+        String email = String.valueOf(((TextInputLayout) findViewById(R.id.input_email)).getEditText().getText());
+        String cpf = String.valueOf(((TextInputLayout) findViewById(R.id.input_cpf)).getEditText().getText());
+        String password = String.valueOf(((TextInputLayout) findViewById(R.id.input_password_singup)).getEditText().getText());
+        String password_confirm = String.valueOf(((TextInputLayout) findViewById(R.id.input_password_singup_confirm)).getEditText().getText());
+
+        // Verifica se todos os campos foram preenchidos
+        if (name.equals("") || email.equals("") || cpf.equals("") || password.equals("") || password_confirm.equals(""))
+        {
+            Functions.alert(Main.this, "Warning", "Fill in all the information!", "Try again",true);
+            return;
+        }
+
+        // Verifica se o E-mail é valido
+        if (!Functions.validateEmail(email))
+        {
+            Functions.alert(Main.this, "Warning", "Invalid email!", "Try again",true);
+            return;
+        }
+
+        // Verifica se o CPF é valido
+        if (!Functions.validateCPF(cpf))
+        {
+            Functions.alert(Main.this, "Warning", "Invalid CPF!", "Try again",true);
+            return;
+        }
+
+        // Verifica se as senhas estão iguais
+        if (!(password.equals(password_confirm)))
+        {
+            Functions.alert(Main.this, "Warning", "Passwords don't match!", "Try again",true);
+            return;
+        }
+
+        btnSignup.setVisibility(View.INVISIBLE);
+        progressIndicator.setVisibility(View.VISIBLE);
+
+        // Dispara a requisição na api para cadastrar o usuário
+        requestQueue.add((new Requests()).sendRequestPost("/user/register", Functions.getParamsRegister(name, email, cpf, password), new IVolleyCallback() {
+            @Override
+            public void onSuccess(JSONObject response) throws JSONException
+            {
+                btnSignup.setVisibility(View.VISIBLE);
+                progressIndicator.setVisibility(View.INVISIBLE);
+
+                if ((response.getString("message").indexOf("successfully")) > 0)
+                {
+                    Functions.alert(Main.this, "Successfully", response.getString("message"), "Ok",true);
+                    screenLogin(view);
+                }
+                else
+                {
+                    Functions.alert(Main.this, "Warning", response.getString("message"), "Ok",true);
+                }
+            }
+            @Override
+            public void onError(JSONObject response) throws JSONException {
+                btnSignup.setVisibility(View.VISIBLE);
+                progressIndicator.setVisibility(View.INVISIBLE);
+                Functions.alert(Main.this, "Error", response.getString("message"), "Try again",true);
+            }
+        }));
+    }
+
+    public void logout(View view)
+    {
+        Functions.cleanCachedAuth(prefsAuth);
+        screenLogin(view);
+    }
 }
