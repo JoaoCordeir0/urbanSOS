@@ -15,7 +15,6 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.Toast;
 import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.Volley;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
@@ -28,10 +27,11 @@ import br.com.urbansos.fragments.CameraFragment;
 import br.com.urbansos.fragments.HomeFragment;
 import br.com.urbansos.fragments.NotificationFragment;
 import br.com.urbansos.fragments.SettingsFragment;
-import br.com.urbansos.http.Requests;
+import br.com.urbansos.http.Volley;
 import br.com.urbansos.interfaces.IVolleyCallback;
 
 public class Main extends AppCompatActivity {
+    public static String urlApi = "https://api.urbansos.com.br";
     private RequestQueue requestQueue;
     private SharedPreferences prefsAuth;
 
@@ -41,7 +41,7 @@ public class Main extends AppCompatActivity {
         setContentView(R.layout.preloader);
 
         // Instância singleton do Volley
-        requestQueue = Volley.newRequestQueue(getApplicationContext());
+        requestQueue = com.android.volley.toolbox.Volley.newRequestQueue(getApplicationContext());
 
         // Atribuição do cache de autenticação na constante prefsAuth
         prefsAuth = getSharedPreferences(getString(R.string.preferences_file_auth), Context.MODE_PRIVATE);
@@ -69,8 +69,11 @@ public class Main extends AppCompatActivity {
     public void screenForgotPassword(View view) { setContentView(R.layout.forgotpassword); }
     public void screenLogin(View view) { setContentView(R.layout.login); }
     public void screenSignup(View view) { setContentView(R.layout.signup); }
-    public void screenMain(View view)
+    public void screenMain(View view) throws JSONException
     {
+        // Chama a função que carrega os reports do usuário
+        reportsList(view);
+
         setContentView(R.layout.main);
 
         // Responsável por identificar os cliques nos itens da navbar e carregar o fragmento da página
@@ -152,7 +155,7 @@ public class Main extends AppCompatActivity {
         progressIndicator.setVisibility(View.VISIBLE);
 
         // Dispara a requisição do login
-        requestQueue.add((new Requests()).sendRequestPost("/user/login", Functions.getParamsLogin(username, password), new IVolleyCallback() {
+        requestQueue.add((new Volley()).sendRequestPOST("/user/login", Functions.getParamsLogin(username, password), new IVolleyCallback() {
             @Override
             public void onSuccess(JSONObject response) throws JSONException
             {
@@ -218,7 +221,7 @@ public class Main extends AppCompatActivity {
         progressIndicator.setVisibility(View.VISIBLE);
 
         // Dispara a requisição na api para cadastrar o usuário
-        requestQueue.add((new Requests()).sendRequestPost("/user/register", Functions.getParamsRegister(name, email, cpf, password), new IVolleyCallback() {
+        requestQueue.add((new Volley()).sendRequestPOST("/user/register", Functions.getParamsRegister(name, email, cpf, password), new IVolleyCallback() {
             @Override
             public void onSuccess(JSONObject response) throws JSONException
             {
@@ -242,6 +245,24 @@ public class Main extends AppCompatActivity {
                 Functions.alert(Main.this, "Error", response.getString("message"), "Try again",true);
             }
         }));
+    }
+
+    public void reportsList(View view) throws JSONException
+    {
+        requestQueue.add((new Volley()).sendRequestGET("/report/list/user/" + (Functions.getCachedAuth(prefsAuth)).getString("id"), new IVolleyCallback() {
+            @Override
+            public void onSuccess(JSONObject response) throws JSONException {
+                for (int c = 0; c < response.length(); c++)
+                {
+                    JSONObject report = response.getJSONObject("report" + c);
+                    System.out.println(report.getString("title"));
+                }
+            }
+            @Override
+            public void onError(JSONObject response) throws JSONException {
+                Functions.alert(Main.this, "Error", "Your reports were unable to load, try reopening the app!", "Ok",true);
+            }
+        }, (Functions.getCachedAuth(prefsAuth)).getString("token"), "report"));
     }
 
     public void logout(View view)
