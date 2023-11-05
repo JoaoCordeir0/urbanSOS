@@ -1,45 +1,45 @@
 package br.com.urbansos.fragments;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.android.volley.RequestQueue;
+import com.google.android.material.progressindicator.LinearProgressIndicator;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+
+import br.com.urbansos.Main;
 import br.com.urbansos.R;
+import br.com.urbansos.functions.Functions;
+import br.com.urbansos.http.Volley;
+import br.com.urbansos.interfaces.IVolleyCallback;
+import br.com.urbansos.models.Report;
+import br.com.urbansos.models.ReportAdapter;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link HomeFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class HomeFragment extends Fragment {
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private ArrayList<Report> itens;
+    private RecyclerView recycle;
 
-    public HomeFragment() {
-        // Required empty public constructor
-    }
+    public HomeFragment() { }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment HomeFragment.
-     */
-    // TODO: Rename and change types and number of parameters
     public static HomeFragment newInstance(String param1, String param2) {
         HomeFragment fragment = new HomeFragment();
         Bundle args = new Bundle();
@@ -69,5 +69,54 @@ public class HomeFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_home, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        try
+        {
+            // Carrega os reports que vem da API para a recycleview
+            reportsDataInitialize(view);
+        }
+        catch (JSONException e)
+        {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void reportsDataInitialize(View view) throws JSONException {
+        itens = new ArrayList<Report>();
+        Main.requestQueue.add((new Volley()).sendRequestGET("/report/list/user/" + (Functions.getCachedAuth()).getString("id"), new IVolleyCallback() {
+            @Override
+            public void onSuccess(JSONObject response) throws JSONException {
+                for (int c = 0; c < response.length(); c++)
+                {
+                    JSONObject r = response.getJSONObject("report" + c);
+                    itens.add(new Report(
+                            r.getString("title"),
+                            r.getString("description"),
+                            r.getString("createdAt"),
+                            r.getString("image"),
+                            r.getString("latitude"),
+                            r.getString("longitude"),
+                            r.getString("situation"),
+                            Integer.parseInt(r.getString("status")),
+                            Integer.parseInt(r.getString("userId")),
+                            Integer.parseInt(r.getString("cityId"))
+                    ));
+                }
+                // Oculta o preloader
+                ((LinearProgressIndicator) view.findViewById(R.id.progressindicator_reports)).setVisibility(View.INVISIBLE);
+
+                recycle = view.findViewById(R.id.reports_recycleview);
+                recycle.setLayoutManager(new LinearLayoutManager(getContext()));
+                recycle.setAdapter(new ReportAdapter(getContext(), itens));
+            }
+            @Override
+            public void onError(JSONObject response) throws JSONException {
+                Functions.alert(getContext(), "Error", "Your reports were unable to load, try reopening the app!", "Ok",true);
+            }
+        }, (Functions.getCachedAuth()).getString("token"), "report"));
     }
 }

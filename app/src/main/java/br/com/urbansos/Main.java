@@ -5,8 +5,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.MenuItem;
@@ -22,6 +27,9 @@ import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.google.android.material.textfield.TextInputLayout;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+
 import br.com.urbansos.functions.Functions;
 import br.com.urbansos.fragments.CameraFragment;
 import br.com.urbansos.fragments.HomeFragment;
@@ -29,11 +37,13 @@ import br.com.urbansos.fragments.NotificationFragment;
 import br.com.urbansos.fragments.SettingsFragment;
 import br.com.urbansos.http.Volley;
 import br.com.urbansos.interfaces.IVolleyCallback;
+import br.com.urbansos.models.Report;
+import br.com.urbansos.models.ReportAdapter;
 
 public class Main extends AppCompatActivity {
     public static String urlApi = "https://api.urbansos.com.br";
-    private RequestQueue requestQueue;
-    private SharedPreferences prefsAuth;
+    public static RequestQueue requestQueue;
+    public static SharedPreferences prefsAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +64,7 @@ public class Main extends AppCompatActivity {
                 try
                 {
                     // Checa se o usuário possuí cache de autenticação
-                    if (Functions.verifyCachedAuth(prefsAuth))
+                    if (Functions.verifyCachedAuth())
                     {
                         screenMain(new View(getApplicationContext()));
                     }
@@ -66,14 +76,8 @@ public class Main extends AppCompatActivity {
         }, 1000);
     }
 
-    public void screenForgotPassword(View view) { setContentView(R.layout.forgotpassword); }
-    public void screenLogin(View view) { setContentView(R.layout.login); }
-    public void screenSignup(View view) { setContentView(R.layout.signup); }
     public void screenMain(View view) throws JSONException
     {
-        // Chama a função que carrega os reports do usuário
-        reportsList(view);
-
         setContentView(R.layout.main);
 
         // Responsável por identificar os cliques nos itens da navbar e carregar o fragmento da página
@@ -117,12 +121,16 @@ public class Main extends AppCompatActivity {
                 }
                 else if (id == R.id.action_account)
                 {
-                    Toast.makeText(Main.this, "Redirect Browser", Toast.LENGTH_SHORT).show();
+                    browseTo(view);
                 }
                 return false;
             }
         });
     }
+
+    public void screenForgotPassword(View view) { setContentView(R.layout.forgotpassword); }
+    public void screenLogin(View view) { setContentView(R.layout.login); }
+    public void screenSignup(View view) { setContentView(R.layout.signup); }
 
     void setFragment(Fragment fragment, String title)
     {
@@ -161,7 +169,7 @@ public class Main extends AppCompatActivity {
             {
                 try
                 {
-                    if (Functions.validateLogin(response, prefsAuth, rememberme))
+                    if (Functions.validateLogin(response, rememberme))
                         screenMain(view);
                 }
                 catch (Exception e)
@@ -247,27 +255,23 @@ public class Main extends AppCompatActivity {
         }));
     }
 
-    public void reportsList(View view) throws JSONException
+    public void browseTo(View view)
     {
-        requestQueue.add((new Volley()).sendRequestGET("/report/list/user/" + (Functions.getCachedAuth(prefsAuth)).getString("id"), new IVolleyCallback() {
-            @Override
-            public void onSuccess(JSONObject response) throws JSONException {
-                for (int c = 0; c < response.length(); c++)
-                {
-                    JSONObject report = response.getJSONObject("report" + c);
-                    System.out.println(report.getString("title"));
-                }
-            }
-            @Override
-            public void onError(JSONObject response) throws JSONException {
-                Functions.alert(Main.this, "Error", "Your reports were unable to load, try reopening the app!", "Ok",true);
-            }
-        }, (Functions.getCachedAuth(prefsAuth)).getString("token"), "report"));
+        String url = null;
+        try
+        {
+            url = "https://urbansos.com.br/user/" + (Functions.getCachedAuth()).getString("id");
+        }
+        catch (JSONException e) { throw new RuntimeException(e); }
+
+        Intent i = new Intent(Intent.ACTION_VIEW);
+        i.setData(Uri.parse(url));
+        startActivity(i);
     }
 
     public void logout(View view)
     {
-        Functions.cleanCachedAuth(prefsAuth);
+        Functions.cleanCachedAuth();
         screenLogin(view);
     }
 }

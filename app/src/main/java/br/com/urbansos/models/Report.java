@@ -3,20 +3,24 @@ package br.com.urbansos.models;
 public class Report {
     private String title;
     private String description;
+    private String date;
     private String image;
     private String latitude;
     private String longitude;
-    private int situation;
+    private String situation;
+    private int status;
     private int userID;
     private int cityID;
 
-    public Report(String title, String description, String image, String latitude, String longitude, int situation, int userID, int cityID) {
+    public Report(String title, String description, String date, String image, String latitude, String longitude, String situation, int status, int userID, int cityID) {
         this.title = title;
         this.description = description;
+        this.date = date;
         this.image = image;
         this.latitude = latitude;
         this.longitude = longitude;
         this.situation = situation;
+        this.status = status;
         this.userID = userID;
         this.cityID = cityID;
     }
@@ -27,6 +31,10 @@ public class Report {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
     }
 
     public void setImage(String image) {
@@ -41,8 +49,12 @@ public class Report {
         this.longitude = longitude;
     }
 
-    public void setSituation(int situation) {
+    public void setSituation(String situation) {
         this.situation = situation;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
     }
 
     public void setUserID(int userID) {
@@ -61,6 +73,10 @@ public class Report {
         return description;
     }
 
+    public String getDate() {
+        return date;
+    }
+
     public String getImage() {
         return image;
     }
@@ -73,8 +89,12 @@ public class Report {
         return longitude;
     }
 
-    public int getSituation() {
+    public String getSituation() {
         return situation;
+    }
+
+    public int getStatus() {
+        return status;
     }
 
     public int getUserID() {

@@ -18,6 +18,7 @@ import java.util.InputMismatchException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import br.com.urbansos.Main;
 import br.com.urbansos.R;
 
 public class Functions {
@@ -41,7 +42,7 @@ public class Functions {
         return data;
     }
 
-    public static boolean validateLogin(JSONObject response, SharedPreferences prefsAuth, Boolean rememberme) throws JSONException
+    public static boolean validateLogin(JSONObject response, Boolean rememberme) throws JSONException
     {
         JSONObject user = response.getJSONObject("user");
 
@@ -49,19 +50,19 @@ public class Functions {
         {
             // Salva a autenticação do usuário em cache caso o usuário escolher ser lembrado
             if (rememberme)
-                Functions.setCachedAuth(prefsAuth, response, user);
+                Functions.setCachedAuth(response, user);
 
             return true;
         }
         return false;
     }
 
-    public static boolean verifyCachedAuth(SharedPreferences prefsAuth) throws ParseException {
-        String token = prefsAuth.getString("token", null);
+    public static boolean verifyCachedAuth() throws ParseException {
+        String token = Main.prefsAuth.getString("token", null);
 
         DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 
-        Date d1 = df.parse (prefsAuth.getString("tokenDate", null));
+        Date d1 = df.parse (Main.prefsAuth.getString("tokenDate", null));
         Date d2 = df.parse (Functions.getDate());
 
         long dt = (d2.getTime() - d1.getTime());
@@ -75,9 +76,9 @@ public class Functions {
         return false;
     }
 
-    public static void setCachedAuth(SharedPreferences prefsAuth, JSONObject response, JSONObject user) throws JSONException
+    public static void setCachedAuth(JSONObject response, JSONObject user) throws JSONException
     {
-        SharedPreferences.Editor editor = prefsAuth.edit();
+        SharedPreferences.Editor editor = Main.prefsAuth.edit();
         editor.putString("token", response.getString("access_token"));
         editor.putString("tokenDate", Functions.getDate());
         editor.putString("UserID", user.getString("id"));
@@ -87,20 +88,20 @@ public class Functions {
         editor.apply();
     }
 
-    public static void cleanCachedAuth(SharedPreferences prefsAuth)
+    public static void cleanCachedAuth()
     {
-        SharedPreferences.Editor editor = prefsAuth.edit();
+        SharedPreferences.Editor editor = Main.prefsAuth.edit();
         editor.clear();
         editor.commit();
     }
 
-    public static JSONObject getCachedAuth(SharedPreferences prefsAuth) throws JSONException
+    public static JSONObject getCachedAuth() throws JSONException
     {
-        String token = prefsAuth.getString("token", null);
-        String id = prefsAuth.getString("UserID", null);
-        String name = prefsAuth.getString("UserName", null);
-        String email = prefsAuth.getString("UserEmail", null);
-        String cpf = prefsAuth.getString("UserCPF", null);
+        String token = Main.prefsAuth.getString("token", null);
+        String id = Main.prefsAuth.getString("UserID", null);
+        String name = Main.prefsAuth.getString("UserName", null);
+        String email = Main.prefsAuth.getString("UserEmail", null);
+        String cpf = Main.prefsAuth.getString("UserCPF", null);
 
         JSONObject data = new JSONObject();
         data.put("token", token);
