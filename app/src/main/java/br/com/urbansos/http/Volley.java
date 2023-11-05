@@ -19,7 +19,6 @@ import br.com.urbansos.interfaces.IRequests;
 import br.com.urbansos.interfaces.IVolleyCallback;
 
 public class Volley implements IRequests {
-
     @Override
     public JsonObjectRequest sendRequestPOST(String path, JSONObject jsonObject, IVolleyCallback callback) throws UnsupportedOperationException {
         final String requestBody = jsonObject.toString();

@@ -68,7 +68,8 @@ public class Main extends AppCompatActivity {
                     {
                         screenMain(new View(getApplicationContext()));
                     }
-                } catch (Exception ex)
+                }
+                catch (Exception ex)
                 {
                     screenLogin(new View(getApplicationContext()));
                 }
