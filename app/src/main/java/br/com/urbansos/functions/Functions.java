@@ -22,7 +22,6 @@ import br.com.urbansos.Main;
 import br.com.urbansos.R;
 
 public class Functions {
-
     public static JSONObject getParamsLogin(String username, String password) throws JSONException
     {
         JSONObject data = new JSONObject();
@@ -42,6 +41,13 @@ public class Functions {
         return data;
     }
 
+    public static JSONObject getParamsRecoverPassword(String email) throws JSONException
+    {
+        JSONObject data = new JSONObject();
+        data.put("email", email);
+        return data;
+    }
+
     public static boolean validateLogin(JSONObject response, Boolean rememberme) throws JSONException
     {
         JSONObject user = response.getJSONObject("user");
@@ -49,42 +55,47 @@ public class Functions {
         if (user.getString("status").equals("1"))
         {
             // Salva a autenticação do usuário em cache caso o usuário escolher ser lembrado
-            if (rememberme)
-                Functions.setCachedAuth(response, user);
+            Functions.setCachedAuth(response, user, rememberme);
 
             return true;
         }
         return false;
     }
 
-    public static boolean verifyCachedAuth() throws ParseException {
+    public static boolean verifyCachedAuth() throws ParseException, Exception {
+
         String token = Main.prefsAuth.getString("token", null);
 
         DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 
-        Date d1 = df.parse (Main.prefsAuth.getString("tokenDate", null));
-        Date d2 = df.parse (Functions.getDate());
+        Date d1 = df.parse(Main.prefsAuth.getString("tokenDate", null));
+        Date d2 = df.parse(Functions.getDate());
 
         long dt = (d2.getTime() - d1.getTime());
         long days = dt / 86400000L;
 
         // Autenticação valida caso exista o token e esse token tenha igual ou menos que 15 dias
-        if (token.length() > 1 && days <= 15)
-        {
+        if (token.length() > 1 && days <= 15) {
             return true;
         }
         return false;
     }
 
-    public static void setCachedAuth(JSONObject response, JSONObject user) throws JSONException
+    public static void setCachedAuth(JSONObject response, JSONObject user, boolean rememberme) throws JSONException
     {
+        Functions.cleanCachedAuth();
+
         SharedPreferences.Editor editor = Main.prefsAuth.edit();
+
+        if (rememberme)
+            editor.putString("tokenDate", Functions.getDate());
+
         editor.putString("token", response.getString("access_token"));
-        editor.putString("tokenDate", Functions.getDate());
         editor.putString("UserID", user.getString("id"));
         editor.putString("UserName", user.getString("name"));
         editor.putString("UserEmail", user.getString("email"));
         editor.putString("UserCpf", user.getString("cpf"));
+
         editor.apply();
     }
 

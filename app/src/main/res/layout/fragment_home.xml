@@ -13,6 +13,38 @@
         android:layout_height="wrap_content"
         android:indeterminate="true" />
 
+    <com.google.android.material.card.MaterialCardView
+        android:visibility="invisible"
+        android:id="@+id/card_notfound"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="7dp"
+        android:layout_marginBottom="5dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                style="@style/card_report"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/title_notfound"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="No reports available"
+                    android:textSize="18dp"
+                    android:textAppearance="?attr/textAppearanceTitleMedium"/>
+
+            </LinearLayout>
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/reports_recycleview"
         android:layout_width="match_parent"

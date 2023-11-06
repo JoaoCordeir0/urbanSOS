@@ -107,7 +107,7 @@
     <Button
         android:id="@+id/btn_forgotpassword"
         style="@style/Widget.Material3.Button.ElevatedButton"
-        android:onClick="screenForgotPassword"
+        android:onClick="screenRecoverPassword"
         android:layout_width="wrap_content"
         android:layout_height="60dp"
         android:layout_gravity="end"

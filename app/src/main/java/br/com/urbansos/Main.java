@@ -5,8 +5,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
 import android.content.Intent;
@@ -18,7 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.Toast;
+
 import com.android.volley.RequestQueue;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -28,8 +26,6 @@ import com.google.android.material.textfield.TextInputLayout;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-
 import br.com.urbansos.functions.Functions;
 import br.com.urbansos.fragments.CameraFragment;
 import br.com.urbansos.fragments.HomeFragment;
@@ -37,8 +33,6 @@ import br.com.urbansos.fragments.NotificationFragment;
 import br.com.urbansos.fragments.SettingsFragment;
 import br.com.urbansos.http.Volley;
 import br.com.urbansos.interfaces.IVolleyCallback;
-import br.com.urbansos.models.Report;
-import br.com.urbansos.models.ReportAdapter;
 
 public class Main extends AppCompatActivity {
     public static String urlApi = "https://api.urbansos.com.br";
@@ -129,7 +123,7 @@ public class Main extends AppCompatActivity {
         });
     }
 
-    public void screenForgotPassword(View view) { setContentView(R.layout.forgotpassword); }
+    public void screenRecoverPassword(View view) { setContentView(R.layout.recoverpassword); }
     public void screenLogin(View view) { setContentView(R.layout.login); }
     public void screenSignup(View view) { setContentView(R.layout.signup); }
 
@@ -250,6 +244,54 @@ public class Main extends AppCompatActivity {
             @Override
             public void onError(JSONObject response) throws JSONException {
                 btnSignup.setVisibility(View.VISIBLE);
+                progressIndicator.setVisibility(View.INVISIBLE);
+                Functions.alert(Main.this, "Error", response.getString("message"), "Try again",true);
+            }
+        }));
+    }
+
+    public void recoverPassword(View view) throws JSONException
+    {
+        Button btnRecover = findViewById(R.id.btn_recoverpassword);
+        CircularProgressIndicator progressIndicator = findViewById(R.id.progressindicator_recoverpassword);
+
+        String email = String.valueOf(((TextInputLayout) findViewById(R.id.input_email_recoverpassword)).getEditText().getText());
+
+        // Verifica se o email foi preechido
+        if (email.equals(""))
+        {
+            Functions.alert(Main.this, "Warning", "Fill in the email!", "Try again",true);
+            return;
+        }
+
+        // Verifica se o E-mail é valido
+        if (!Functions.validateEmail(email))
+        {
+            Functions.alert(Main.this, "Warning", "Invalid email!", "Try again",true);
+            return;
+        }
+
+        btnRecover.setVisibility(View.INVISIBLE);
+        progressIndicator.setVisibility(View.VISIBLE);
+        requestQueue.add((new Volley()).sendRequestPOST("/user/recoverpassword", Functions.getParamsRecoverPassword(email), new IVolleyCallback() {
+            @Override
+            public void onSuccess(JSONObject response) throws JSONException {
+                btnRecover.setVisibility(View.VISIBLE);
+                progressIndicator.setVisibility(View.INVISIBLE);
+
+                if (response.getString("message").equals("Email send!"))
+                {
+                    screenLogin(view);
+                    Functions.alert(Main.this, "Successfully", "Email sent. Use the link sent to recover your password!", "Ok",true);
+                }
+                else
+                {
+                    Functions.alert(Main.this, "Warning", response.getString("message"), "Ok",true);
+                }
+            }
+            @Override
+            public void onError(JSONObject response) throws JSONException {
+                btnRecover.setVisibility(View.VISIBLE);
                 progressIndicator.setVisibility(View.INVISIBLE);
                 Functions.alert(Main.this, "Error", response.getString("message"), "Try again",true);
             }

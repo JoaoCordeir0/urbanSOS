@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.android.volley.RequestQueue;
+import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 
 import org.json.JSONException;
@@ -90,28 +91,38 @@ public class HomeFragment extends Fragment {
         Main.requestQueue.add((new Volley()).sendRequestGET("/report/list/user/" + (Functions.getCachedAuth()).getString("id"), new IVolleyCallback() {
             @Override
             public void onSuccess(JSONObject response) throws JSONException {
-                for (int c = 0; c < response.length(); c++)
+                if (response.length() > 0)
                 {
-                    JSONObject r = response.getJSONObject("report" + c);
-                    itens.add(new Report(
-                            r.getString("title"),
-                            r.getString("description"),
-                            r.getString("createdAt"),
-                            r.getString("image"),
-                            r.getString("latitude"),
-                            r.getString("longitude"),
-                            r.getString("situation"),
-                            Integer.parseInt(r.getString("status")),
-                            Integer.parseInt(r.getString("userId")),
-                            Integer.parseInt(r.getString("cityId"))
-                    ));
-                }
-                // Oculta o preloader
-                ((LinearProgressIndicator) view.findViewById(R.id.progressindicator_reports)).setVisibility(View.INVISIBLE);
+                    for (int c = 0; c < response.length(); c++)
+                    {
+                        JSONObject r = response.getJSONObject("report" + c);
+                        itens.add(new Report(
+                                r.getString("title"),
+                                r.getString("description"),
+                                r.getString("createdAt"),
+                                r.getString("image"),
+                                r.getString("latitude"),
+                                r.getString("longitude"),
+                                r.getString("situation"),
+                                Integer.parseInt(r.getString("status")),
+                                Integer.parseInt(r.getString("userId")),
+                                Integer.parseInt(r.getString("cityId"))
+                        ));
+                    }
+                    // Oculta o preloader
+                    ((LinearProgressIndicator) view.findViewById(R.id.progressindicator_reports)).setVisibility(View.INVISIBLE);
 
-                recycle = view.findViewById(R.id.reports_recycleview);
-                recycle.setLayoutManager(new LinearLayoutManager(getContext()));
-                recycle.setAdapter(new ReportAdapter(getContext(), itens));
+                    recycle = view.findViewById(R.id.reports_recycleview);
+                    recycle.setLayoutManager(new LinearLayoutManager(getContext()));
+                    recycle.setAdapter(new ReportAdapter(getContext(), itens));
+                }
+                else
+                {
+                    // Oculta o preloader
+                    ((LinearProgressIndicator) view.findViewById(R.id.progressindicator_reports)).setVisibility(View.INVISIBLE);
+                    // Ativa a mensagem de nenhum card disponivel
+                    ((MaterialCardView) view.findViewById(R.id.card_notfound)).setVisibility(View.VISIBLE);
+                }
             }
             @Override
             public void onError(JSONObject response) throws JSONException {
