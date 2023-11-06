@@ -1,5 +1,8 @@
 package br.com.urbansos.models;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class Report {
     private String title;
     private String description;
@@ -33,9 +36,7 @@ public class Report {
         this.description = description;
     }
 
-    public void setDate(String date) {
-        this.date = date;
-    }
+    public void setDate(String date) { this.date = date; }
 
     public void setImage(String image) {
         this.image = image;
@@ -65,9 +66,7 @@ public class Report {
         this.cityID = cityID;
     }
 
-    public String getTitle() {
-        return title;
-    }
+    public String getTitle() { return title; }
 
     public String getDescription() {
         return description;

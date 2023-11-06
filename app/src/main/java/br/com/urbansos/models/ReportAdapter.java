@@ -8,7 +8,12 @@ import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+
 import br.com.urbansos.R;
 
 public class ReportAdapter extends RecyclerView.Adapter<ReportViewHolder> {
@@ -35,7 +40,7 @@ public class ReportAdapter extends RecyclerView.Adapter<ReportViewHolder> {
 
         // Seta a cor do título do card com base no status
         String status;
-        if (report.getStatus() != 0)
+        if (report.getStatus() == 0)
         {
             holder.title.setTextColor(Color.parseColor("#B3261E"));
             status = "Opened";
@@ -46,9 +51,18 @@ public class ReportAdapter extends RecyclerView.Adapter<ReportViewHolder> {
             status = "Resolved";
         }
 
+        Date dt = null;
+        try
+        {
+            dt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX").parse(report.getDate());
+        }
+        catch (ParseException e) { throw new RuntimeException(e); }
+
+        String dateFormated = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(dt);
+
         holder.title.setText(report.getTitle() + " | " + status);
         holder.description.setText(report.getDescription());
-        holder.date.setText(report.getDate());
+        holder.date.setText(dateFormated);
 
         setFadeAnimation(holder.itemView);
     }

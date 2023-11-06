@@ -6,6 +6,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -20,7 +21,8 @@ import br.com.urbansos.interfaces.IVolleyCallback;
 
 public class Volley implements IRequests {
     @Override
-    public JsonObjectRequest sendRequestPOST(String path, JSONObject jsonObject, IVolleyCallback callback) throws UnsupportedOperationException {
+    public JsonObjectRequest sendRequestPOST(String path, JSONObject jsonObject, IVolleyCallback callback) throws UnsupportedOperationException
+    {
         final String requestBody = jsonObject.toString();
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.POST,
@@ -69,7 +71,8 @@ public class Volley implements IRequests {
     }
 
     @Override
-    public JsonArrayRequest sendRequestGET(String path, IVolleyCallback callback, String token, String type) throws UnsupportedOperationException {
+    public JsonArrayRequest sendRequestGET(String path, IVolleyCallback callback, String token, String type) throws UnsupportedOperationException
+    {
         JsonArrayRequest request = new JsonArrayRequest(
                 Request.Method.GET,
                 Main.urlApi + path,
@@ -118,6 +121,40 @@ public class Volley implements IRequests {
         };
 
         request.setTag("getRequest");
+        return request;
+    }
+
+    public StringRequest sendRequestPUT(String path, Map params, String token)
+    {
+        StringRequest request = new StringRequest(
+                Request.Method.PUT,
+                Main.urlApi + path,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        System.out.println(response);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError err) {
+                        System.out.println(err);
+                    }
+                }
+        ) {
+            @Override
+            protected Map<String, String> getParams() {
+                return params;
+            }
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<String, String>();
+                headers.put("x-access-token", token);
+                return headers;
+            }
+        };
+
+        request.setTag("putRequest");
         return request;
     }
 }

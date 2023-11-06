@@ -88,13 +88,14 @@ public class CameraFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
         Bitmap photo = (Bitmap) data.getExtras().get("data");
         report_image.setImageBitmap(photo);
 
         // Caminho do arquivo
         File file = new File(getRealPathFromURI(getImageUri(getContext(), photo)));
 
-        // Seta em cache o caminho do arquivo
+        // Seta em cache o caminho da foto tirada
         Functions.setCachedPhoto(file.getPath());
     }
 

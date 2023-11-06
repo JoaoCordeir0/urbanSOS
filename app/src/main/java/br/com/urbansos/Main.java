@@ -304,11 +304,35 @@ public class Main extends AppCompatActivity {
 
     public void sendReport(View view) throws JSONException
     {
-        String report_image = (Functions.getCachedPhoto()).getString("Photo");
-        String report_title = String.valueOf(((TextInputLayout) findViewById(R.id.input_report_title)).getEditText().getText());
-        String report_description = String.valueOf(((TextInputLayout) findViewById(R.id.input_report_description)).getEditText().getText());
+        String image = (Functions.getCachedPhoto()).getString("Photo");
+        String title = String.valueOf(((TextInputLayout) findViewById(R.id.input_report_title)).getEditText().getText());
+        String description = String.valueOf(((TextInputLayout) findViewById(R.id.input_report_description)).getEditText().getText());
+        String latitude = "1234";
+        String longitude = "1234";
+        String situation = String.valueOf(((TextInputLayout) findViewById(R.id.input_select_level)).getEditText().getText());
+        String userId = (Functions.getCachedAuth()).getString("id");
+        String cityId = "1"; // req to get city
+        String status = "0";
 
-        System.out.println(report_image);
+        // Verifica se todos os campos foram preenchidos
+        if (image.equals("") || title.equals("") || description.equals("") || situation.equals(""))
+        {
+            Functions.alert(Main.this, "Warning", "Fill in all the information!", "Try again",true);
+            return;
+        }
+
+        // Envia em segundo plano a requisição de um novo reporte
+        requestQueue.add((new Volley()).sendRequestPUT(
+                "/report/register",
+                Functions.getParamsReportRegister(image, title, description, latitude, longitude, situation, userId, cityId, status),
+                (Functions.getCachedAuth()).getString("token")
+        ));
+
+        // Notifica o usuário que o report será enviado
+        Functions.alert(Main.this, "Successfully", "We are sending your report. Thank you for helping maintain the city!", "Ok",true);
+
+        // Retorna para a tela principal
+        setFragment(new HomeFragment(), "My Reports");
     }
 
     public void browseTo(View view)

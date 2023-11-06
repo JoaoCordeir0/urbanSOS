@@ -14,7 +14,9 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.InputMismatchException;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -46,6 +48,22 @@ public class Functions {
         JSONObject data = new JSONObject();
         data.put("email", email);
         return data;
+    }
+
+    public static Map<String, String> getParamsReportRegister(String image, String title, String description, String latitude, String longitude, String situation, String userId, String cityId, String status) throws JSONException
+    {
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("image", image);
+        params.put("title", title);
+        params.put("description", description);
+        params.put("latitude", latitude);
+        params.put("longitude", longitude);
+        params.put("situation", situation);
+        params.put("userId", userId);
+        params.put("cityId", cityId);
+        params.put("status", status);
+
+        return params;
     }
 
     public static boolean validateLogin(JSONObject response, Boolean rememberme) throws JSONException
@@ -161,7 +179,7 @@ public class Functions {
     public static void alert(Context context, String title, String message, String btnText, Boolean cancelable)
     {
         AlertDialog.Builder alert = new AlertDialog.Builder(new ContextThemeWrapper(context, R.style.alertDialog));
-        alert.setIcon(R.drawable.warning)
+        alert.setIcon(title.equals("Successfully") ? R.drawable.success : R.drawable.warning)
              .setTitle(title)
              .setMessage("\n" + message + "\n")
              .setCancelable(cancelable)
