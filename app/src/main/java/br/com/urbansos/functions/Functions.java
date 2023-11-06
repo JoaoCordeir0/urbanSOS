@@ -4,7 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.view.ContextThemeWrapper;
-import android.widget.Button;
+import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,6 +22,7 @@ import java.util.regex.Pattern;
 
 import br.com.urbansos.Main;
 import br.com.urbansos.R;
+import br.com.urbansos.models.GPSTracker;
 
 public class Functions {
     public static JSONObject getParamsLogin(String username, String password) throws JSONException
@@ -246,7 +247,8 @@ public class Functions {
         }
     }
 
-    public static String removeSpecialCharacters(String doc) {
+    public static String removeSpecialCharacters(String doc)
+    {
         if (doc.contains(".")) {
             doc = doc.replace(".", "");
         }
