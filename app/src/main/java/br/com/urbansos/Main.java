@@ -38,6 +38,7 @@ public class Main extends AppCompatActivity {
     public static String urlApi = "https://api.urbansos.com.br";
     public static RequestQueue requestQueue;
     public static SharedPreferences prefsAuth;
+    public static SharedPreferences prefsPhoto;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +50,9 @@ public class Main extends AppCompatActivity {
 
         // Atribuição do cache de autenticação na constante prefsAuth
         prefsAuth = getSharedPreferences(getString(R.string.preferences_file_auth), Context.MODE_PRIVATE);
+
+        // Atribuição do cache de reports. Armazena o path das imagens que são tiradas para posteriormente enviar para o AWS
+        prefsPhoto = getSharedPreferences(getString(R.string.preferences_file_photo), Context.MODE_PRIVATE);
 
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
@@ -296,6 +300,15 @@ public class Main extends AppCompatActivity {
                 Functions.alert(Main.this, "Error", response.getString("message"), "Try again",true);
             }
         }));
+    }
+
+    public void sendReport(View view) throws JSONException
+    {
+        String report_image = (Functions.getCachedPhoto()).getString("Photo");
+        String report_title = String.valueOf(((TextInputLayout) findViewById(R.id.input_report_title)).getEditText().getText());
+        String report_description = String.valueOf(((TextInputLayout) findViewById(R.id.input_report_description)).getEditText().getText());
+
+        System.out.println(report_image);
     }
 
     public void browseTo(View view)

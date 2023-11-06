@@ -99,13 +99,6 @@ public class Functions {
         editor.apply();
     }
 
-    public static void cleanCachedAuth()
-    {
-        SharedPreferences.Editor editor = Main.prefsAuth.edit();
-        editor.clear();
-        editor.commit();
-    }
-
     public static JSONObject getCachedAuth() throws JSONException
     {
         String token = Main.prefsAuth.getString("token", null);
@@ -122,6 +115,41 @@ public class Functions {
         data.put("cpf", cpf);
 
         return data;
+    }
+
+    public static void cleanCachedAuth()
+    {
+        SharedPreferences.Editor editor = Main.prefsAuth.edit();
+        editor.clear();
+        editor.commit();
+    }
+
+    public static void setCachedPhoto(String path)
+    {
+        Functions.cleanCachedPhoto();
+        SharedPreferences.Editor editor = Main.prefsPhoto.edit();
+        editor.putString("PathPhoto", path);
+        editor.apply();
+    }
+
+    public static JSONObject getCachedPhoto() throws JSONException
+    {
+        String path_photo = Main.prefsPhoto.getString("PathPhoto", null);
+        String[] photo_array = path_photo.split("/");
+        String photo = photo_array[photo_array.length - 1];
+
+        JSONObject data = new JSONObject();
+        data.put("PathPhoto", path_photo);
+        data.put("Photo", photo);
+
+        return data;
+    }
+
+    public static void cleanCachedPhoto()
+    {
+        SharedPreferences.Editor editor = Main.prefsPhoto.edit();
+        editor.clear();
+        editor.commit();
     }
 
     public static String getDate()
