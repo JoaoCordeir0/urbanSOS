@@ -38,6 +38,7 @@ public class Main extends AppCompatActivity {
     public static RequestQueue requestQueue;
     public static SharedPreferences prefsAuth;
     public static SharedPreferences prefsPhoto;
+    public static SharedPreferences prefsLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +53,9 @@ public class Main extends AppCompatActivity {
 
         // Atribuição do cache de reports. Armazena o path das imagens que são tiradas para posteriormente enviar para o AWS
         prefsPhoto = getSharedPreferences(getString(R.string.preferences_file_photo), Context.MODE_PRIVATE);
+
+        // Atribuição do cache com informação da localização. Armazena o endereço e id da cidade que retorna na validação antes de iniciar um report
+        prefsLocation = getSharedPreferences(getString(R.string.preferences_file_location), Context.MODE_PRIVATE);
 
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
@@ -303,14 +307,14 @@ public class Main extends AppCompatActivity {
 
     public void sendReport(View view) throws JSONException
     {
-        GPSTracker gps = new GPSTracker(Main.this);
-
         String image = (Functions.getCachedPhoto()).getString("Photo");
         String title = String.valueOf(((TextInputLayout) findViewById(R.id.input_report_title)).getEditText().getText());
         String description = String.valueOf(((TextInputLayout) findViewById(R.id.input_report_description)).getEditText().getText());
         String situation = String.valueOf(((TextInputLayout) findViewById(R.id.input_select_level)).getEditText().getText());
         String userId = (Functions.getCachedAuth()).getString("id");
-        String cityId = "1"; // req to get city
+        String latitude = (Functions.getCachedLocation()).getString("latitude");
+        String longitude = (Functions.getCachedLocation()).getString("longitude");
+        String cityId = (Functions.getCachedLocation()).getString("cityId");
         String status = "0";
 
         // Verifica se todos os campos foram preenchidos
@@ -319,22 +323,17 @@ public class Main extends AppCompatActivity {
             return;
         }
 
-        if (gps.canGetLocation()) // Checa se foi possível recuperar a localização do usuário
-        {
-            String latitude = gps.getLatitude();
-            String longitude = gps.getLongitude();
+        // Envia em segundo plano a requisição de um novo reporte
+        requestQueue.add((new Volley()).sendRequestPUT(
+                "/report/register",
+                Functions.getParamsReportRegister(image, title, description, latitude, longitude, situation, userId, cityId, status),
+                (Functions.getCachedAuth()).getString("token")
+        ));
 
-            requestQueue.add((new Volley()).sendRequestPUT( // Envia em segundo plano a requisição de um novo reporte
-                    "/report/register",
-                    Functions.getParamsReportRegister(image, title, description, latitude, longitude, situation, userId, cityId, status),
-                    (Functions.getCachedAuth()).getString("token")
-            ));
+        Functions.alert(Main.this, "Successfully", "We are sending your report. Thank you for helping maintain the city!", "Ok", true);
 
-            Functions.alert(Main.this, "Successfully", "We are sending your report. Thank you for helping maintain the city!", "Ok", true);
-
-            setFragment(new HomeFragment(), "My Reports");
-            ((BottomNavigationView) findViewById(R.id.bottom_navigation)).setSelectedItemId(R.id.fragment_home);
-        }
+        setFragment(new HomeFragment(), "My Reports");
+        ((BottomNavigationView) findViewById(R.id.bottom_navigation)).setSelectedItemId(R.id.fragment_home);
     }
 
     public void logout(View view)

@@ -19,10 +19,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.card.MaterialCardView;
+import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
+import com.google.android.material.textfield.TextInputLayout;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -33,8 +41,13 @@ import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import br.com.urbansos.Main;
 import br.com.urbansos.R;
 import br.com.urbansos.functions.Functions;
+import br.com.urbansos.http.Volley;
+import br.com.urbansos.interfaces.IVolleyCallback;
+import br.com.urbansos.models.GPSTracker;
+import br.com.urbansos.models.Report;
 
 public class CameraFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
@@ -75,14 +88,79 @@ public class CameraFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        report_image = view.findViewById(R.id.report_image);
+        GPSTracker gps = new GPSTracker(getContext());
 
-        // Intent da camera
-        Intent open_camera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(open_camera, 100);
+        // Checa se foi possível recuperar a localização do usuário
+        if (gps.canGetLocation())
+        {
+            String latitude = gps.getLatitude();
+            String longitude = gps.getLongitude();
+            try {
+                // Requisição que retorna a cidade em que o usuário está usando o app.
+                Main.requestQueue.add((new Volley()).sendRequestGET("/city/latlng/" + latitude + "/" + longitude, new IVolleyCallback() {
+                    @Override
+                    public void onSuccess(JSONObject response) throws JSONException {
+                        // Desliga o preloader
+                        ((LinearProgressIndicator) view.findViewById(R.id.progressindicator_camera)).setVisibility(View.INVISIBLE);
 
-        autoCompleteReportOptions = view.findViewById(R.id.select_report_options);
-        autoCompleteReportOptions.setAdapter(new ArrayAdapter<String>(getContext(), R.layout.report_options, items));
+                        JSONObject address = response.getJSONObject("address0");
+
+                        // Caso a cidade não estiver disponivel lista as cidades disponiveis
+                        if (address.getString("city").equals("0"))
+                        {
+                            ((MaterialCardView) view.findViewById(R.id.card_cities_available)).setVisibility(View.VISIBLE);
+
+                            Functions.alert(getContext(), "Warning", address.getString("message"), "Ok",true);
+
+                            // Recupera da API uma listagem das cidades disponiveis para uso do app
+                            Main.requestQueue.add((new Volley()).sendRequestGET("/city/list", new IVolleyCallback() {
+                                @Override
+                                public void onSuccess(JSONObject response) throws JSONException {
+                                    if (response.length() > 0)
+                                    {
+                                        String cities = "";
+                                        for (int c = 0; c < response.length(); c++)
+                                        {
+                                            JSONObject city = response.getJSONObject("city" + c);
+                                            cities += city.getString("name") + " - " + city.getString("state") + "\n";
+                                        }
+                                        ((TextView) view.findViewById(R.id.cities_available_names)).setText(cities.substring(0, cities.length() - 1));
+                                    }
+                                }
+                                @Override
+                                public void onError(JSONObject response) throws JSONException {
+                                    Functions.alert(getContext(), "Error", response.getString("message"), "Ok",true);
+                                }
+                            }, (Functions.getCachedAuth()).getString("token"), "city"));
+                        }
+                        else // Caso a cidade esteja disponivel abre a camera e libera o formulario de report
+                        {
+                            Functions.setCachedLocation(latitude, longitude, address.getString("city"), address.getString("address"));
+
+                            report_image = view.findViewById(R.id.report_image);
+
+                            // Seta os campos do formulario visiveis
+                            ((TextInputLayout) view.findViewById(R.id.input_report_title)).setVisibility(View.VISIBLE);
+                            ((TextInputLayout) view.findViewById(R.id.input_report_description)).setVisibility(View.VISIBLE);
+                            ((TextInputLayout) view.findViewById(R.id.input_select_level)).setVisibility(View.VISIBLE);
+                            ((Button) view.findViewById(R.id.btn_send_report)).setVisibility(View.VISIBLE);
+
+                            // Intent da camera
+                            Intent open_camera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                            startActivityForResult(open_camera, 100);
+
+                            autoCompleteReportOptions = view.findViewById(R.id.select_report_options);
+                            autoCompleteReportOptions.setAdapter(new ArrayAdapter<String>(getContext(), R.layout.report_options, items));
+                        }
+                    }
+                    @Override
+                    public void onError(JSONObject response) throws JSONException {
+                        Functions.alert(getContext(), "Error", response.getString("message"), "Ok",true);
+                    }
+                }, (Functions.getCachedAuth()).getString("token"), "address"));
+            }
+            catch (JSONException e) { throw new RuntimeException(e); }
+        }
     }
 
     @Override
@@ -91,6 +169,7 @@ public class CameraFragment extends Fragment {
 
         Bitmap photo = (Bitmap) data.getExtras().get("data");
         report_image.setImageBitmap(photo);
+        report_image.setVisibility(View.VISIBLE);
 
         // Caminho do arquivo
         File file = new File(getRealPathFromURI(getImageUri(getContext(), photo)));

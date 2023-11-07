@@ -174,6 +174,37 @@ public class Functions {
         editor.commit();
     }
 
+    public static void setCachedLocation(String latitude, String longitude, String city, String address)
+    {
+        Functions.cleanCachedLocation();
+
+        SharedPreferences.Editor editor = Main.prefsLocation.edit();
+        editor.putString("Latitude", latitude);
+        editor.putString("Longitude", longitude);
+        editor.putString("CityID", city);
+        editor.putString("Address", address);
+
+        editor.apply();
+    }
+
+    public static JSONObject getCachedLocation() throws JSONException
+    {
+        JSONObject data = new JSONObject();
+        data.put("latitude", Main.prefsLocation.getString("Latitude", null));
+        data.put("longitude", Main.prefsLocation.getString("Longitude", null));
+        data.put("cityId", Main.prefsLocation.getString("CityID", null));
+        data.put("adress", Main.prefsLocation.getString("Address", null));
+
+        return data;
+    }
+
+    public static void cleanCachedLocation()
+    {
+        SharedPreferences.Editor editor = Main.prefsPhoto.edit();
+        editor.clear();
+        editor.commit();
+    }
+
     public static String getDate()
     {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
