@@ -1,7 +1,5 @@
 package br.com.urbansos;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -9,16 +7,13 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.Manifest;
 
 import com.android.volley.RequestQueue;
 import com.google.android.material.appbar.MaterialToolbar;
@@ -124,18 +119,14 @@ public class Main extends AppCompatActivity {
                 }
                 else if (id == R.id.action_account)
                 {
-                    browseTo(view);
+                    Functions.browseTo(Main.this);
                 }
                 return false;
             }
         });
     }
 
-    public void screenRecoverPassword(View view) { setContentView(R.layout.recoverpassword); }
-    public void screenLogin(View view) { setContentView(R.layout.login); }
-    public void screenSignup(View view) { setContentView(R.layout.signup); }
-
-    void setFragment(Fragment fragment, String title)
+    public void setFragment(Fragment fragment, String title)
     {
         // Seta o titulo da página
         ((MaterialToolbar) findViewById(R.id.topAppBar)).setTitle(title);
@@ -146,6 +137,10 @@ public class Main extends AppCompatActivity {
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
     }
+
+    public void screenRecoverPassword(View view) { setContentView(R.layout.recoverpassword); }
+    public void screenLogin(View view) { setContentView(R.layout.login); }
+    public void screenSignup(View view) { setContentView(R.layout.signup); }
 
     public void authLogin(View view) throws Exception
     {
@@ -338,21 +333,8 @@ public class Main extends AppCompatActivity {
             Functions.alert(Main.this, "Successfully", "We are sending your report. Thank you for helping maintain the city!", "Ok", true);
 
             setFragment(new HomeFragment(), "My Reports");
+            ((BottomNavigationView) findViewById(R.id.bottom_navigation)).setSelectedItemId(R.id.fragment_home);
         }
-    }
-
-    public void browseTo(View view)
-    {
-        String url = null;
-        try
-        {
-            url = "https://urbansos.com.br/user/" + (Functions.getCachedAuth()).getString("id");
-        }
-        catch (JSONException e) { throw new RuntimeException(e); }
-
-        Intent i = new Intent(Intent.ACTION_VIEW);
-        i.setData(Uri.parse(url));
-        startActivity(i);
     }
 
     public void logout(View view)

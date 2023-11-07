@@ -2,8 +2,11 @@ package br.com.urbansos.functions;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.view.ContextThemeWrapper;
+import android.view.View;
 import android.widget.Toast;
 
 import org.json.JSONException;
@@ -267,5 +270,19 @@ public class Functions {
         Matcher matcher = pattern.matcher(email);
 
         return matcher.matches();
+    }
+
+    public static void browseTo(Context context)
+    {
+        String url = null;
+        try
+        {
+            url = "https://urbansos.com.br/user/" + (Functions.getCachedAuth()).getString("id");
+        }
+        catch (JSONException e) { throw new RuntimeException(e); }
+
+        Intent i = new Intent(Intent.ACTION_VIEW);
+        i.setData(Uri.parse(url));
+        context.startActivity(i);
     }
 }
