@@ -39,16 +39,16 @@ public class ReportAdapter extends RecyclerView.Adapter<ReportViewHolder> {
         Report report = itens.get(position);
 
         // Seta a cor do título do card com base no status
-        String status;
-        if (report.getStatus() == 0)
+        switch(report.getStatus())
         {
-            holder.title.setTextColor(Color.parseColor("#B3261E"));
-            status = "Opened";
-        }
-        else
-        {
-            holder.title.setTextColor(Color.parseColor("#1C9838"));
-            status = "Resolved";
+            case "Opened":
+                holder.title.setTextColor(Color.parseColor("#B3261E")); // RED
+                break;
+            case "In progress":
+                holder.title.setTextColor(Color.parseColor("#0473ea[")); // BLUE
+                break;
+            case "Resolved":
+                holder.title.setTextColor(Color.parseColor("#1C9838")); // GREEN
         }
 
         Date dt = null;
@@ -60,7 +60,7 @@ public class ReportAdapter extends RecyclerView.Adapter<ReportViewHolder> {
 
         String dateFormated = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(dt);
 
-        holder.title.setText(report.getTitle() + " | " + status);
+        holder.title.setText(report.getTitle() + " | " + report.getStatus());
         holder.description.setText(report.getDescription());
         holder.date.setText(dateFormated);
 

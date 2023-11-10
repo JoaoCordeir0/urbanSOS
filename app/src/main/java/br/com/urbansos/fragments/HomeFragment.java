@@ -104,7 +104,7 @@ public class HomeFragment extends Fragment {
                                 r.getString("latitude"),
                                 r.getString("longitude"),
                                 r.getString("situation"),
-                                Integer.parseInt(r.getString("status")),
+                                r.getString("status"),
                                 Integer.parseInt(r.getString("userId")),
                                 Integer.parseInt(r.getString("cityId"))
                         ));

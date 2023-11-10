@@ -315,7 +315,7 @@ public class Main extends AppCompatActivity {
         String latitude = (Functions.getCachedLocation()).getString("latitude");
         String longitude = (Functions.getCachedLocation()).getString("longitude");
         String cityId = (Functions.getCachedLocation()).getString("cityId");
-        String status = "0";
+        String status = "1";
 
         // Verifica se todos os campos foram preenchidos
         if (image.equals("") || title.equals("") || description.equals("") || situation.equals("")) {
