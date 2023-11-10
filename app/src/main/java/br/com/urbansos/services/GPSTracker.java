@@ -1,4 +1,4 @@
-package br.com.urbansos.models;
+package br.com.urbansos.services;
 
 import android.app.AlertDialog;
 import android.annotation.SuppressLint;

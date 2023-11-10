@@ -45,7 +45,7 @@ public class ReportAdapter extends RecyclerView.Adapter<ReportViewHolder> {
                 holder.title.setTextColor(Color.parseColor("#B3261E")); // RED
                 break;
             case "In progress":
-                holder.title.setTextColor(Color.parseColor("#0473ea[")); // BLUE
+                holder.title.setTextColor(Color.parseColor("#0473ea")); // BLUE
                 break;
             case "Resolved":
                 holder.title.setTextColor(Color.parseColor("#1C9838")); // GREEN

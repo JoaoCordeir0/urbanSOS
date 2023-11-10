@@ -6,8 +6,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.view.ContextThemeWrapper;
-import android.view.View;
-import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -25,7 +23,6 @@ import java.util.regex.Pattern;
 
 import br.com.urbansos.Main;
 import br.com.urbansos.R;
-import br.com.urbansos.models.GPSTracker;
 
 public class Functions {
     public static JSONObject getParamsLogin(String username, String password) throws JSONException
@@ -123,18 +120,12 @@ public class Functions {
 
     public static JSONObject getCachedAuth() throws JSONException
     {
-        String token = Main.prefsAuth.getString("token", null);
-        String id = Main.prefsAuth.getString("UserID", null);
-        String name = Main.prefsAuth.getString("UserName", null);
-        String email = Main.prefsAuth.getString("UserEmail", null);
-        String cpf = Main.prefsAuth.getString("UserCPF", null);
-
         JSONObject data = new JSONObject();
-        data.put("token", token);
-        data.put("id", id);
-        data.put("name", name);
-        data.put("email", email);
-        data.put("cpf", cpf);
+        data.put("token", Main.prefsAuth.getString("token", null));
+        data.put("id", Main.prefsAuth.getString("UserID", null));
+        data.put("name", Main.prefsAuth.getString("UserName", null));
+        data.put("email", Main.prefsAuth.getString("UserEmail", null));
+        data.put("cpf", Main.prefsAuth.getString("UserCPF", null));
 
         return data;
     }

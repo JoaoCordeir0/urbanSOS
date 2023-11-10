@@ -31,7 +31,6 @@ import br.com.urbansos.fragments.NotificationFragment;
 import br.com.urbansos.fragments.SettingsFragment;
 import br.com.urbansos.http.Volley;
 import br.com.urbansos.interfaces.IVolleyCallback;
-import br.com.urbansos.models.GPSTracker;
 
 public class Main extends AppCompatActivity {
     public static String urlApi = "https://api.urbansos.com.br";
@@ -315,7 +314,7 @@ public class Main extends AppCompatActivity {
         String latitude = (Functions.getCachedLocation()).getString("latitude");
         String longitude = (Functions.getCachedLocation()).getString("longitude");
         String cityId = (Functions.getCachedLocation()).getString("cityId");
-        String status = "1";
+        String status = "1"; // Opened
 
         // Verifica se todos os campos foram preenchidos
         if (image.equals("") || title.equals("") || description.equals("") || situation.equals("")) {
