@@ -4,13 +4,18 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,6 +35,7 @@ import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -46,6 +52,7 @@ public class CameraFragment extends Fragment {
     private String mParam1;
     private String mParam2;
     private ImageView report_image;
+    private static final int REQUEST_IMAGE_CAPTURE = 1;
     String[] items = {"Tolerable", "Serious", "Urgent"};
     AutoCompleteTextView autoCompleteReportOptions;
     ArrayAdapter<String> adapterItens;
@@ -137,8 +144,23 @@ public class CameraFragment extends Fragment {
                             ((Button) view.findViewById(R.id.btn_send_report)).setVisibility(View.VISIBLE);
 
                             // Intent da camera
-                            Intent open_camera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                            startActivityForResult(open_camera, 100);
+                            Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                            if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null)
+                            {
+                                File photoFile = null;
+                                try
+                                {
+                                    photoFile = createImageFile();
+                                }
+                                catch (IOException ex) {  }
+
+                                if (photoFile != null)
+                                {
+                                    Uri photoURI = FileProvider.getUriForFile(getContext(), "br.com.urbansos", photoFile);
+                                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                                    startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+                                }
+                            }
 
                             autoCompleteReportOptions = view.findViewById(R.id.select_report_options);
                             autoCompleteReportOptions.setAdapter(new ArrayAdapter<String>(getContext(), R.layout.report_options, items));
@@ -154,35 +176,59 @@ public class CameraFragment extends Fragment {
         }
     }
 
+    private File createImageFile() throws IOException, JSONException {
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp;
+
+        File storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(imageFileName, ".jpg", storageDir);
+
+        Functions.setCachedPhoto(image.getAbsolutePath());
+
+        return image;
+    }
+
+    private Bitmap rotateBitmap(Bitmap bitmap, int orientation) {
+        Matrix matrix = new Matrix();
+        switch (orientation) {
+            case ExifInterface.ORIENTATION_ROTATE_90:
+                matrix.postRotate(90);
+                break;
+            case ExifInterface.ORIENTATION_ROTATE_180:
+                matrix.postRotate(180);
+                break;
+            case ExifInterface.ORIENTATION_ROTATE_270:
+                matrix.postRotate(270);
+                break;
+            default:
+                return bitmap;
+        }
+        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        Bitmap photo = (Bitmap) data.getExtras().get("data");
-        report_image.setImageBitmap(photo);
+        String currentPhotoPath = null;
+        try
+        {
+            currentPhotoPath = (Functions.getCachedPhoto()).getString("PathPhoto");
+        }
+        catch (JSONException e) { throw new RuntimeException(e); }
+
+        Bitmap bitmap = BitmapFactory.decodeFile(currentPhotoPath);
+
+        try
+        {
+            ExifInterface exifInterface = new ExifInterface(currentPhotoPath);
+            int orientation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED);
+
+            bitmap = rotateBitmap(bitmap, orientation);
+        }
+        catch (IOException e) { e.printStackTrace(); }
+
+        report_image.setImageBitmap(bitmap);
         report_image.setVisibility(View.VISIBLE);
-
-        // Caminho do arquivo
-        File file = new File(getRealPathFromURI(getImageUri(getContext(), photo)));
-
-        // Seta em cache o caminho da foto tirada
-        Functions.setCachedPhoto(file.getPath());
-    }
-
-    public Uri getImageUri(Context inContext, Bitmap inImage)
-    {
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "IMG_" + timeStamp, null);
-        return Uri.parse(path);
-    }
-
-    public String getRealPathFromURI(Uri uri)
-    {
-        Cursor cursor = getContext().getContentResolver().query(uri, null, null, null, null);
-        cursor.moveToFirst();
-        int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
-        return cursor.getString(idx);
     }
 }
