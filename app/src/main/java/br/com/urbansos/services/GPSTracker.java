@@ -92,7 +92,6 @@ public class GPSTracker extends Service implements LocationListener, IGPS {
         catch (Exception e)
         {
             this.canGetLocation = false;
-            this.showSettingsAlert();
         }
         return location;
     }
@@ -130,23 +129,6 @@ public class GPSTracker extends Service implements LocationListener, IGPS {
     public boolean canGetLocation()
     {
         return this.canGetLocation;
-    }
-
-    @Override
-    public void showSettingsAlert()
-    {
-        AlertDialog.Builder alert = new AlertDialog.Builder(new ContextThemeWrapper(mContext, R.style.alertDialog));
-        alert.setIcon(R.drawable.warning)
-             .setTitle("Location access")
-             .setMessage("Authorize the app to access your location. Do you want to open the configuration menu?")
-             .setPositiveButton("Settings", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                    mContext.startActivity(intent);
-                }
-             })
-             .setNegativeButton("Cancel", null);
-        alert.create().show();
     }
 
     @Override

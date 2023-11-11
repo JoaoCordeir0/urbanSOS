@@ -7,9 +7,13 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Settings;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -31,6 +35,8 @@ import br.com.urbansos.fragments.NotificationFragment;
 import br.com.urbansos.fragments.SettingsFragment;
 import br.com.urbansos.http.Volley;
 import br.com.urbansos.interfaces.IVolleyCallback;
+import br.com.urbansos.services.ConnectionReceiver;
+import br.com.urbansos.services.GPSTracker;
 
 public class Main extends AppCompatActivity {
     public static String urlApi = "https://api.urbansos.com.br";
@@ -56,13 +62,26 @@ public class Main extends AppCompatActivity {
         // Atribuição do cache com informação da localização. Armazena o endereço e id da cidade que retorna na validação antes de iniciar um report
         prefsLocation = getSharedPreferences(getString(R.string.preferences_file_location), Context.MODE_PRIVATE);
 
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
+        (new Handler()).postDelayed(new Runnable() {
             @Override
             public void run()
             {
                 try
                 {
+                    // Verifica se o usuário liberou as permissões de localização para o app
+                    if (!(new GPSTracker(Main.this)).canGetLocation())
+                    {
+                        screenWarning(new View(getApplicationContext()), "gps");
+                        return;
+                    }
+
+                    // Verifica se o smartphone está conectado a internet
+                    if (!(new ConnectionReceiver(Main.this)).getConnectionStatus())
+                    {
+                        screenWarning(new View(getApplicationContext()), "connection");
+                        return;
+                    }
+
                     // Checa se o usuário possuí cache de autenticação
                     if (Functions.verifyCachedAuth())
                     {
@@ -77,6 +96,37 @@ public class Main extends AppCompatActivity {
         }, 1000);
     }
 
+    public void openGpsSettings(View view) { startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)); }
+    public void openWifiSettings(View view) { startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS)); }
+    public void reloadApp(View view) { this.recreate(); }
+
+    public void setFragment(Fragment fragment, String title)
+    {
+        // Seta o titulo da página
+        ((MaterialToolbar) findViewById(R.id.topAppBar)).setTitle(title);
+
+        // Troca o fragmento
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.main_frame_layout, fragment);
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.commit();
+    }
+
+    public void screenRecoverPassword(View view) { setContentView(R.layout.recoverpassword); }
+    public void screenLogin(View view) { setContentView(R.layout.login); }
+    public void screenSignup(View view) { setContentView(R.layout.signup); }
+    public void screenWarning(View view, String typeWarning)
+    {
+        switch (typeWarning)
+        {
+            case "gps":
+                setContentView(R.layout.alert_gps);
+                break;
+            case "connection":
+                setContentView(R.layout.alert_connection);
+                break;
+        }
+    }
     public void screenMain(View view) throws JSONException
     {
         setContentView(R.layout.main);
@@ -129,22 +179,6 @@ public class Main extends AppCompatActivity {
         });
     }
 
-    public void setFragment(Fragment fragment, String title)
-    {
-        // Seta o titulo da página
-        ((MaterialToolbar) findViewById(R.id.topAppBar)).setTitle(title);
-
-        // Troca o fragmento
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.main_frame_layout, fragment);
-        fragmentTransaction.addToBackStack(null);
-        fragmentTransaction.commit();
-    }
-
-    public void screenRecoverPassword(View view) { setContentView(R.layout.recoverpassword); }
-    public void screenLogin(View view) { setContentView(R.layout.login); }
-    public void screenSignup(View view) { setContentView(R.layout.signup); }
-
     public void authLogin(View view) throws Exception
     {
         Button btnLogin = findViewById(R.id.btn_login_1);
@@ -182,6 +216,8 @@ public class Main extends AppCompatActivity {
             }
             @Override
             public void onError(JSONObject response) throws JSONException {
+                progressIndicator.setVisibility(View.INVISIBLE);
+                btnLogin.setVisibility(View.VISIBLE);
                 Functions.alert(Main.this, "Error", response.getString("message"), "Try again",true);
             }
         }));

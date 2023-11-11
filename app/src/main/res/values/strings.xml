@@ -28,4 +28,9 @@
     <string name="report_description">Description:</string>
     <string name="report_submit">Send report</string>
     <string name="select_report_level">Report level</string>
+    <string name="warning">Warning!</string>
+    <string name="reload">Reload</string>
+    <string name="gotosettings">Go to settings</string>
+    <string name="alert_gps_msg">To use the UrbanSOS service we need access to your location, this information is necessary to accurately send the location of your report to those responsible. \n\nChoose the "Go to Settings" option to release permission.</string>
+    <string name="alert_connection_msg">The application requires an internet connection to consult and send information, connect to the internet to use the application.</string>
 </resources>
