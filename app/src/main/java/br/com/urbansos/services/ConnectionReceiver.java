@@ -1,21 +1,28 @@
 package br.com.urbansos.services;
 
+import android.Manifest;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 
-import br.com.urbansos.interfaces.IConnection;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
-public class ConnectionReceiver implements IConnection {
+import br.com.urbansos.interfaces.IReceiver;
+
+public class ConnectionReceiver implements IReceiver {
     private Context mContext;
-    private Boolean connectionStatus;
+    private AppCompatActivity activity;
+    private Boolean status;
 
-    public ConnectionReceiver(Context mContext) {
+    public ConnectionReceiver(Context mContext, AppCompatActivity activity) {
         this.mContext = mContext;
-        this.checkConnection();
+        this.activity = activity;
+        this.checkStatus();
     }
     @Override
-    public void checkConnection()
+    public void checkStatus()
     {
         // Pega a conectividade do contexto o qual o metodo foi chamado
         ConnectivityManager cm = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -24,15 +31,19 @@ public class ConnectionReceiver implements IConnection {
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
 
         // Se o objeto for nulo ou nao tem conectividade retorna false
-        setConnectionStatus((netInfo != null) && (netInfo.isConnectedOrConnecting()) && (netInfo.isAvailable()));
+        setStatus((netInfo != null) && (netInfo.isConnectedOrConnecting()) && (netInfo.isAvailable()));
     }
 
     @Override
-    public void setConnectionStatus(Boolean connectionStatus) {
-        this.connectionStatus = connectionStatus;
+    public void setStatus(boolean status) {
+        this.status = status;
     }
+
     @Override
-    public boolean getConnectionStatus() {
-        return this.connectionStatus;
+    public boolean getStatus() {
+        return this.status;
     }
+
+    @Override
+    public void requestPermission() { }
 }

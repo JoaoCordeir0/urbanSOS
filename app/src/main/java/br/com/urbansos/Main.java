@@ -9,8 +9,6 @@ import androidx.fragment.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
@@ -35,8 +33,9 @@ import br.com.urbansos.fragments.NotificationFragment;
 import br.com.urbansos.fragments.SettingsFragment;
 import br.com.urbansos.http.Volley;
 import br.com.urbansos.interfaces.IVolleyCallback;
+import br.com.urbansos.services.CameraReceiver;
 import br.com.urbansos.services.ConnectionReceiver;
-import br.com.urbansos.services.GPSTracker;
+import br.com.urbansos.services.LocationReceiver;
 
 public class Main extends AppCompatActivity {
     public static String urlApi = "https://api.urbansos.com.br";
@@ -69,14 +68,21 @@ public class Main extends AppCompatActivity {
                 try
                 {
                     // Verifica se o usuário liberou as permissões de localização para o app
-                    if (!(new GPSTracker(Main.this)).canGetLocation())
+                    if (!(new LocationReceiver(Main.this, Main.this)).getStatus())
                     {
                         screenWarning(new View(getApplicationContext()), "gps");
                         return;
                     }
 
+                    // Verifica se o usuário liberou as permissões de camera para o app
+                    if (!(new CameraReceiver(Main.this, Main.this)).getStatus())
+                    {
+                        screenWarning(new View(getApplicationContext()), "camera");
+                        return;
+                    }
+
                     // Verifica se o smartphone está conectado a internet
-                    if (!(new ConnectionReceiver(Main.this)).getConnectionStatus())
+                    if (!(new ConnectionReceiver(Main.this, Main.this)).getStatus())
                     {
                         screenWarning(new View(getApplicationContext()), "connection");
                         return;
@@ -96,7 +102,6 @@ public class Main extends AppCompatActivity {
         }, 1000);
     }
 
-    public void openGpsSettings(View view) { startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)); }
     public void openWifiSettings(View view) { startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS)); }
     public void reloadApp(View view) { this.recreate(); }
 
@@ -120,7 +125,10 @@ public class Main extends AppCompatActivity {
         switch (typeWarning)
         {
             case "gps":
-                setContentView(R.layout.alert_gps);
+                setContentView(R.layout.alert_location);
+                break;
+            case "camera":
+                setContentView(R.layout.alert_camera);
                 break;
             case "connection":
                 setContentView(R.layout.alert_connection);
@@ -352,8 +360,14 @@ public class Main extends AppCompatActivity {
         String cityId = (Functions.getCachedLocation()).getString("cityId");
         String status = "1"; // Opened
 
+       // Verifica se a imagem existe
+        if (image.equals("")) {
+            Functions.alert(Main.this, "Warning", "A photo is necessary to send the report, click on the camera to take another photo.", "Try again", true);
+            return;
+        }
+
         // Verifica se todos os campos foram preenchidos
-        if (image.equals("") || title.equals("") || description.equals("") || situation.equals("")) {
+        if (title.equals("") || description.equals("") || situation.equals("")) {
             Functions.alert(Main.this, "Warning", "Fill in all the information!", "Try again", true);
             return;
         }
@@ -366,6 +380,8 @@ public class Main extends AppCompatActivity {
         ));
 
         Functions.alert(Main.this, "Successfully", "We are sending your report. Thank you for helping maintain the city!", "Ok", true);
+
+        Functions.cleanCachedPhoto(); // Limpa o chache do path e nome da imagem
 
         setFragment(new HomeFragment(), "My Reports");
         ((BottomNavigationView) findViewById(R.id.bottom_navigation)).setSelectedItemId(R.id.fragment_home);

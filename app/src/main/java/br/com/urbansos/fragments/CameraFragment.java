@@ -10,13 +10,16 @@ import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,6 +55,8 @@ public class CameraFragment extends Fragment {
     private String mParam1;
     private String mParam2;
     private ImageView report_image;
+    private TextView report_image_alert;
+    private String currentPhotoPath;
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     String[] items = {"Tolerable", "Serious", "Urgent"};
     AutoCompleteTextView autoCompleteReportOptions;
@@ -104,7 +109,7 @@ public class CameraFragment extends Fragment {
                         JSONObject address = response.getJSONObject("address0");
 
                         // Caso a cidade não estiver disponivel lista as cidades disponiveis
-                        if (address.getString("city").equals("0"))
+                        if (address.getString("city").equals("0") || address.getString("status").equals("0"))
                         {
                             ((MaterialCardView) view.findViewById(R.id.card_cities_available)).setVisibility(View.VISIBLE);
 
@@ -136,6 +141,7 @@ public class CameraFragment extends Fragment {
                             Functions.setCachedLocation(latitude, longitude, address.getString("city"), address.getString("address"));
 
                             report_image = view.findViewById(R.id.report_image);
+                            report_image_alert = view.findViewById(R.id.msg_alert_no_image);
 
                             // Seta os campos do formulario visiveis
                             ((TextInputLayout) view.findViewById(R.id.input_report_title)).setVisibility(View.VISIBLE);
@@ -178,12 +184,12 @@ public class CameraFragment extends Fragment {
 
     private File createImageFile() throws IOException, JSONException {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp;
+        String imageFileName = "IMG_" + timeStamp;
 
         File storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         File image = File.createTempFile(imageFileName, ".jpg", storageDir);
 
-        Functions.setCachedPhoto(image.getAbsolutePath());
+        currentPhotoPath = image.getAbsolutePath();
 
         return image;
     }
@@ -210,25 +216,27 @@ public class CameraFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        String currentPhotoPath = null;
-        try
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == getActivity().RESULT_OK)
         {
-            currentPhotoPath = (Functions.getCachedPhoto()).getString("PathPhoto");
+            Functions.setCachedPhoto(currentPhotoPath);
+
+            Bitmap bitmap = BitmapFactory.decodeFile(currentPhotoPath);
+
+            try {
+                ExifInterface exifInterface = new ExifInterface(currentPhotoPath);
+                int orientation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED);
+
+                bitmap = rotateBitmap(bitmap, orientation);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            report_image.setImageBitmap(bitmap);
+            report_image.setVisibility(View.VISIBLE);
         }
-        catch (JSONException e) { throw new RuntimeException(e); }
-
-        Bitmap bitmap = BitmapFactory.decodeFile(currentPhotoPath);
-
-        try
+        else
         {
-            ExifInterface exifInterface = new ExifInterface(currentPhotoPath);
-            int orientation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED);
-
-            bitmap = rotateBitmap(bitmap, orientation);
+            report_image_alert.setVisibility(View.VISIBLE);
         }
-        catch (IOException e) { e.printStackTrace(); }
-
-        report_image.setImageBitmap(bitmap);
-        report_image.setVisibility(View.VISIBLE);
     }
 }
