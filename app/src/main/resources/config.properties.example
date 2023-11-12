@@ -1,0 +1,3 @@
+# config.properties
+aws.accessKeyId=
+aws.secretKey=
