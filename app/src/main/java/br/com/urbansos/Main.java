@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -16,7 +15,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
-
 import com.android.volley.RequestQueue;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -25,7 +23,7 @@ import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.google.android.material.textfield.TextInputLayout;
 import org.json.JSONException;
 import org.json.JSONObject;
-
+import java.net.UnknownHostException;
 import br.com.urbansos.functions.Functions;
 import br.com.urbansos.fragments.CameraFragment;
 import br.com.urbansos.fragments.HomeFragment;
@@ -36,6 +34,7 @@ import br.com.urbansos.interfaces.IVolleyCallback;
 import br.com.urbansos.services.CameraReceiver;
 import br.com.urbansos.services.ConnectionReceiver;
 import br.com.urbansos.services.LocationReceiver;
+import br.com.urbansos.services.S3UploadTask;
 
 public class Main extends AppCompatActivity {
     public static String urlApi = "https://api.urbansos.com.br";
@@ -348,8 +347,7 @@ public class Main extends AppCompatActivity {
         }));
     }
 
-    public void sendReport(View view) throws JSONException
-    {
+    public void sendReport(View view) throws JSONException, UnknownHostException {
         String image = (Functions.getCachedPhoto()).getString("Photo");
         String title = String.valueOf(((TextInputLayout) findViewById(R.id.input_report_title)).getEditText().getText());
         String description = String.valueOf(((TextInputLayout) findViewById(R.id.input_report_description)).getEditText().getText());
@@ -379,9 +377,13 @@ public class Main extends AppCompatActivity {
                 (Functions.getCachedAuth()).getString("token")
         ));
 
-        Functions.alert(Main.this, "Successfully", "We are sending your report. Thank you for helping maintain the city!", "Ok", true);
+        // Inicia o upload em segundo plano da imagem para o AWS S3
+        S3UploadTask s3 = new S3UploadTask(image, (Functions.getCachedPhoto()).getString("PathPhoto"));
+        s3.execute();
 
         Functions.cleanCachedPhoto(); // Limpa o chache do path e nome da imagem
+
+        Functions.alert(Main.this, "Successfully", "We are sending your report. Thank you for helping maintain the city!", "Ok", true);
 
         setFragment(new HomeFragment(), "My Reports");
         ((BottomNavigationView) findViewById(R.id.bottom_navigation)).setSelectedItemId(R.id.fragment_home);
