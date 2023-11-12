@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -34,14 +35,16 @@ import br.com.urbansos.interfaces.IVolleyCallback;
 import br.com.urbansos.services.CameraReceiver;
 import br.com.urbansos.services.ConnectionReceiver;
 import br.com.urbansos.services.LocationReceiver;
+import br.com.urbansos.services.NotificationHelper;
 import br.com.urbansos.services.S3UploadTask;
 
 public class Main extends AppCompatActivity {
-    public static String urlApi = "https://api.urbansos.com.br";
+    public static final String urlApi = "https://api.urbansos.com.br";
     public static RequestQueue requestQueue;
     public static SharedPreferences prefsAuth;
     public static SharedPreferences prefsPhoto;
     public static SharedPreferences prefsLocation;
+    public static SharedPreferences prefsNotification;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +62,9 @@ public class Main extends AppCompatActivity {
 
         // Atribuição do cache com informação da localização. Armazena o endereço e id da cidade que retorna na validação antes de iniciar um report
         prefsLocation = getSharedPreferences(getString(R.string.preferences_file_location), Context.MODE_PRIVATE);
+
+        // Atribuição do cache com informação da localização. Armazena o endereço e id da cidade que retorna na validação antes de iniciar um report
+        prefsNotification = getSharedPreferences(getString(R.string.preferences_file_notification), Context.MODE_PRIVATE);
 
         (new Handler()).postDelayed(new Runnable() {
             @Override
@@ -90,6 +96,9 @@ public class Main extends AppCompatActivity {
                     // Checa se o usuário possuí cache de autenticação
                     if (Functions.verifyCachedAuth())
                     {
+                        // Dispara notificações de status de reports atualizados caso o usuario liberou a permissão
+                        new NotificationHelper(Main.this, Main.this);
+
                         screenMain(new View(getApplicationContext()));
                     }
                 }
@@ -98,7 +107,7 @@ public class Main extends AppCompatActivity {
                     screenLogin(new View(getApplicationContext()));
                 }
             }
-        }, 1000);
+        }, 500);
     }
 
     public void openWifiSettings(View view) { startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS)); }
@@ -141,6 +150,7 @@ public class Main extends AppCompatActivity {
         // Responsável por identificar os cliques nos itens da navbar e carregar o fragmento da página
         BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
         setFragment(new HomeFragment(), "My Reports");
+
         bottomNav.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {

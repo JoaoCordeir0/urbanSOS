@@ -1,14 +1,27 @@
 package br.com.urbansos.functions;
 
+import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.view.ContextThemeWrapper;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -25,16 +38,14 @@ import br.com.urbansos.Main;
 import br.com.urbansos.R;
 
 public class Functions {
-    public static JSONObject getParamsLogin(String username, String password) throws JSONException
-    {
+    public static JSONObject getParamsLogin(String username, String password) throws JSONException {
         JSONObject data = new JSONObject();
         data.put("username", username);
         data.put("password", password);
         return data;
     }
 
-    public static JSONObject getParamsRegister(String name, String email, String cpf, String password) throws JSONException
-    {
+    public static JSONObject getParamsRegister(String name, String email, String cpf, String password) throws JSONException {
         JSONObject data = new JSONObject();
         data.put("name", name);
         data.put("email", email);
@@ -44,15 +55,13 @@ public class Functions {
         return data;
     }
 
-    public static JSONObject getParamsRecoverPassword(String email) throws JSONException
-    {
+    public static JSONObject getParamsRecoverPassword(String email) throws JSONException {
         JSONObject data = new JSONObject();
         data.put("email", email);
         return data;
     }
 
-    public static Map<String, String> getParamsReportRegister(String image, String title, String description, String latitude, String longitude, String situation, String userId, String cityId, String status) throws JSONException
-    {
+    public static Map<String, String> getParamsReportRegister(String image, String title, String description, String latitude, String longitude, String situation, String userId, String cityId, String status) throws JSONException {
         Map<String, String> params = new HashMap<String, String>();
         params.put("image", image);
         params.put("title", title);
@@ -67,12 +76,10 @@ public class Functions {
         return params;
     }
 
-    public static boolean validateLogin(JSONObject response, Boolean rememberme) throws JSONException
-    {
+    public static boolean validateLogin(JSONObject response, Boolean rememberme) throws JSONException {
         JSONObject user = response.getJSONObject("user");
 
-        if (user.getString("status").equals("1"))
-        {
+        if (user.getString("status").equals("1")) {
             // Salva a autenticação do usuário em cache caso o usuário escolher ser lembrado
             Functions.setCachedAuth(response, user, rememberme);
 
@@ -100,8 +107,7 @@ public class Functions {
         return false;
     }
 
-    public static void setCachedAuth(JSONObject response, JSONObject user, boolean rememberme) throws JSONException
-    {
+    public static void setCachedAuth(JSONObject response, JSONObject user, boolean rememberme) throws JSONException {
         Functions.cleanCachedAuth();
 
         SharedPreferences.Editor editor = Main.prefsAuth.edit();
@@ -118,8 +124,7 @@ public class Functions {
         editor.apply();
     }
 
-    public static JSONObject getCachedAuth() throws JSONException
-    {
+    public static JSONObject getCachedAuth() throws JSONException {
         JSONObject data = new JSONObject();
         data.put("token", Main.prefsAuth.getString("token", null));
         data.put("id", Main.prefsAuth.getString("UserID", null));
@@ -130,32 +135,28 @@ public class Functions {
         return data;
     }
 
-    public static void cleanCachedAuth()
-    {
+    public static void cleanCachedAuth() {
         SharedPreferences.Editor editor = Main.prefsAuth.edit();
         editor.clear();
         editor.commit();
     }
 
-    public static void setCachedPhoto(String path)
-    {
+    public static void setCachedPhoto(String path) {
         Functions.cleanCachedPhoto();
         SharedPreferences.Editor editor = Main.prefsPhoto.edit();
         editor.putString("PathPhoto", path);
         editor.apply();
     }
 
-    public static JSONObject getCachedPhoto() throws JSONException
-    {
+    public static JSONObject getCachedPhoto() throws JSONException {
         String path_photo = "";
         String photo = "";
-        try
-        {
+        try {
             path_photo = Main.prefsPhoto.getString("PathPhoto", null);
             String[] photo_array = path_photo.split("/");
             photo = photo_array[photo_array.length - 1];
+        } catch (Exception ex) {
         }
-        catch (Exception ex) { }
 
         JSONObject data = new JSONObject();
         data.put("PathPhoto", path_photo);
@@ -164,15 +165,13 @@ public class Functions {
         return data;
     }
 
-    public static void cleanCachedPhoto()
-    {
+    public static void cleanCachedPhoto() {
         SharedPreferences.Editor editor = Main.prefsPhoto.edit();
         editor.clear();
         editor.commit();
     }
 
-    public static void setCachedLocation(String latitude, String longitude, String city, String address)
-    {
+    public static void setCachedLocation(String latitude, String longitude, String city, String address) {
         Functions.cleanCachedLocation();
 
         SharedPreferences.Editor editor = Main.prefsLocation.edit();
@@ -184,8 +183,7 @@ public class Functions {
         editor.apply();
     }
 
-    public static JSONObject getCachedLocation() throws JSONException
-    {
+    public static JSONObject getCachedLocation() throws JSONException {
         JSONObject data = new JSONObject();
         data.put("latitude", Main.prefsLocation.getString("Latitude", null));
         data.put("longitude", Main.prefsLocation.getString("Longitude", null));
@@ -195,46 +193,62 @@ public class Functions {
         return data;
     }
 
-    public static void cleanCachedLocation()
-    {
-        SharedPreferences.Editor editor = Main.prefsPhoto.edit();
+    public static void cleanCachedLocation() {
+        SharedPreferences.Editor editor = Main.prefsLocation.edit();
         editor.clear();
         editor.commit();
     }
 
-    public static String getDate()
-    {
+    public static void setCachedNotification(String count) {
+        Functions.cleanCachedNotification();
+
+        SharedPreferences.Editor editor = Main.prefsNotification.edit();
+        editor.putString("NotificationsCount", count);
+        editor.apply();
+    }
+
+    public static JSONObject getCachedNotification() throws JSONException {
+        JSONObject data = new JSONObject();
+        data.put("count", Main.prefsNotification.getString("NotificationsCount", null));
+        return data;
+    }
+
+    public static void cleanCachedNotification() {
+        SharedPreferences.Editor editor = Main.prefsNotification.edit();
+        editor.clear();
+        editor.commit();
+    }
+
+    public static String getDate() {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         return dtf.format(LocalDateTime.now());
     }
 
-    public static void alert(Context context, String title, String message, String btnText, Boolean cancelable)
-    {
+    public static void alert(Context context, String title, String message, String btnText, Boolean cancelable) {
         AlertDialog.Builder alert = new AlertDialog.Builder(new ContextThemeWrapper(context, R.style.alertDialog));
         alert.setIcon(title.equals("Successfully") ? R.drawable.success : R.drawable.warning)
-             .setTitle(title)
-             .setMessage("\n" + message + "\n")
-             .setCancelable(cancelable)
-             .setNegativeButton(btnText, null);
+                .setTitle(title)
+                .setMessage("\n" + message + "\n")
+                .setCancelable(cancelable)
+                .setNegativeButton(btnText, null);
         alert.create().show();
     }
 
-    public static Boolean validateCPF(String cpf)
-    {
+    public static Boolean validateCPF(String cpf) {
         cpf = Functions.removeSpecialCharacters(cpf);
 
         // considera-se erro CPF's formados por uma sequencia de numeros iguais
         if (cpf.equals("00000000000") ||
-            cpf.equals("11111111111") ||
-            cpf.equals("22222222222") ||
-            cpf.equals("33333333333") ||
-            cpf.equals("44444444444") ||
-            cpf.equals("55555555555") ||
-            cpf.equals("66666666666") ||
-            cpf.equals("77777777777") ||
-            cpf.equals("88888888888") ||
-            cpf.equals("99999999999") ||
-            (cpf.length() != 11))
+                cpf.equals("11111111111") ||
+                cpf.equals("22222222222") ||
+                cpf.equals("33333333333") ||
+                cpf.equals("44444444444") ||
+                cpf.equals("55555555555") ||
+                cpf.equals("66666666666") ||
+                cpf.equals("77777777777") ||
+                cpf.equals("88888888888") ||
+                cpf.equals("99999999999") ||
+                (cpf.length() != 11))
             return false;
 
         char dig10, dig11;
@@ -278,8 +292,7 @@ public class Functions {
         }
     }
 
-    public static String removeSpecialCharacters(String doc)
-    {
+    public static String removeSpecialCharacters(String doc) {
         if (doc.contains(".")) {
             doc = doc.replace(".", "");
         }
@@ -289,8 +302,7 @@ public class Functions {
         return doc;
     }
 
-    public static boolean validateEmail(String email)
-    {
+    public static boolean validateEmail(String email) {
         String expression = "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@"
                 + "[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$";
 
@@ -300,14 +312,13 @@ public class Functions {
         return matcher.matches();
     }
 
-    public static void browseTo(Context context)
-    {
+    public static void browseTo(Context context) {
         String url = null;
-        try
-        {
+        try {
             url = "https://urbansos.com.br/user/" + (Functions.getCachedAuth()).getString("id");
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
         }
-        catch (JSONException e) { throw new RuntimeException(e); }
 
         Intent i = new Intent(Intent.ACTION_VIEW);
         i.setData(Uri.parse(url));
