@@ -38,7 +38,7 @@
         <item name="android:background">@color/app_base_color_dark</item>
     </style>
 
-    <style name="card_report">
+    <style name="card">
         <item name="android:background">@color/app_base_color_dark</item>
     </style>
 

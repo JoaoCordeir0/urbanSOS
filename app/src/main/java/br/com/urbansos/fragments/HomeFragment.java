@@ -120,7 +120,7 @@ public class HomeFragment extends Fragment {
                 {
                     // Oculta o preloader
                     ((LinearProgressIndicator) view.findViewById(R.id.progressindicator_reports)).setVisibility(View.INVISIBLE);
-                    // Ativa a mensagem de nenhum card disponivel
+                    // Ativa a mensagem de nenhum report disponivel
                     ((MaterialCardView) view.findViewById(R.id.card_notfound)).setVisibility(View.VISIBLE);
                 }
             }

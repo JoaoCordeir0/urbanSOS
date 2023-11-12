@@ -2,19 +2,11 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".fragments.NotificationFragment">
-
-    <com.google.android.material.progressindicator.LinearProgressIndicator
-        android:id="@+id/progressindicator_notifications"
-        android:visibility="visible"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:indeterminate="true" />
+    android:layout_height="wrap_content"
+    tools:context=".fragments.HomeFragment">
 
     <com.google.android.material.card.MaterialCardView
-        android:visibility="invisible"
-        android:id="@+id/card_no_notifications"
+        android:id="@+id/card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="7dp"
@@ -31,22 +23,17 @@
                 android:orientation="vertical"
                 android:padding="16dp">
 
+                <!-- Title, secondary and supporting text -->
                 <TextView
-                    android:id="@+id/title_notfound"
+                    android:id="@+id/notification_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/nonotifications"
-                    android:textSize="18dp"
+                    android:text="Card notification example"
+                    android:textSize="15dp"
                     android:textAppearance="?attr/textAppearanceTitleMedium"/>
 
             </LinearLayout>
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/notifications_recycleview"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        tools:listitem="@layout/notifications_list" />
 
 </FrameLayout>

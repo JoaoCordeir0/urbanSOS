@@ -2,43 +2,44 @@ package br.com.urbansos.fragments;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.material.card.MaterialCardView;
+import com.google.android.material.progressindicator.LinearProgressIndicator;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+
+import br.com.urbansos.Main;
 import br.com.urbansos.R;
+import br.com.urbansos.functions.Functions;
+import br.com.urbansos.http.Volley;
+import br.com.urbansos.interfaces.IVolleyCallback;
+import br.com.urbansos.models.Notification;
+import br.com.urbansos.models.NotificationAdapter;
+import br.com.urbansos.models.Report;
+import br.com.urbansos.models.ReportAdapter;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link NotificationFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class NotificationFragment extends Fragment {
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private ArrayList<Notification> itens;
+    private RecyclerView recycle;
 
-    public NotificationFragment() {
-        // Required empty public constructor
-    }
+    public NotificationFragment() { }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment NotificationFragment.
-     */
-    // TODO: Rename and change types and number of parameters
     public static NotificationFragment newInstance(String param1, String param2) {
         NotificationFragment fragment = new NotificationFragment();
         Bundle args = new Bundle();
@@ -62,5 +63,57 @@ public class NotificationFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_notification, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        try
+        {
+            // Carrega os reports que vem da API para a recycleview
+            notificationsDataInitialize(view);
+        }
+        catch (JSONException e)
+        {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void notificationsDataInitialize(View view) throws JSONException {
+        itens = new ArrayList<Notification>();
+        Main.requestQueue.add((new Volley()).sendRequestGET("/notification/list/" + (Functions.getCachedAuth()).getString("id"), new IVolleyCallback() {
+            @Override
+            public void onSuccess(JSONObject response) throws JSONException {
+                if (response.length() > 0)
+                {
+                    for (int c = 0; c < response.length(); c++)
+                    {
+                        JSONObject r = response.getJSONObject("notification" + c);
+                        itens.add(new Notification(
+                                r.getString("title"),
+                                r.getString("createdAt")
+                        ));
+                    }
+                    // Oculta o preloader
+                    ((LinearProgressIndicator) view.findViewById(R.id.progressindicator_notifications)).setVisibility(View.INVISIBLE);
+
+                    recycle = view.findViewById(R.id.notifications_recycleview);
+                    recycle.setLayoutManager(new LinearLayoutManager(getContext()));
+                    recycle.setAdapter(new NotificationAdapter(getContext(), itens));
+                }
+                else
+                {
+                    // Oculta o preloader
+                    ((LinearProgressIndicator) view.findViewById(R.id.progressindicator_notifications)).setVisibility(View.INVISIBLE);
+                    // Ativa a mensagem de nenhuma notificação disponivel
+                    ((MaterialCardView) view.findViewById(R.id.card_no_notifications)).setVisibility(View.VISIBLE);
+                }
+            }
+            @Override
+            public void onError(JSONObject response) throws JSONException {
+                Functions.alert(getContext(), "Error", "Your notifications were unable to load, try reopening the app!", "Ok",true);
+            }
+        }, (Functions.getCachedAuth()).getString("token"), "notification"));
     }
 }

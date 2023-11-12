@@ -29,6 +29,8 @@
     <string name="report_submit">Send report</string>
     <string name="select_report_level">Report level</string>
     <string name="warning">Warning!</string>
+    <string name="noreports">No reports available</string>
+    <string name="nonotifications">No notifications</string>
     <string name="ok">Ok, I got it</string>
     <string name="gotosettings">Go to settings</string>
     <string name="alert_location_msg">We request access to your location as this information is necessary to accurately send the location of your report to those responsible. \n\nClick the OK button after granting the permissions.</string>
