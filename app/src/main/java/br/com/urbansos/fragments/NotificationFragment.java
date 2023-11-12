@@ -71,7 +71,7 @@ public class NotificationFragment extends Fragment {
 
         try
         {
-            // Carrega os reports que vem da API para a recycleview
+            // Carrega as notificações que vem da API para a recycleview
             notificationsDataInitialize(view);
         }
         catch (JSONException e)
