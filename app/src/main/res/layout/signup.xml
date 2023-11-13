@@ -23,6 +23,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/app_name_signup"
+        android:layout_marginTop="-15dp"
         android:padding="0dp"
         android:textSize="34sp"/>
 
@@ -33,7 +34,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="20dp"
         android:layout_marginBottom="10dp"
         android:hint="@string/name" >
         <com.google.android.material.textfield.TextInputEditText
