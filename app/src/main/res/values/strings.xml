@@ -3,7 +3,7 @@
     <string name="app_name_login">Log In UrbanSOS</string>
     <string name="app_name_signup">Sign Up UrbanSOS</string>
     <string name="app_name_recoverpassword">Recover Password</string>
-    <string name="username">Username:</string>
+    <string name="username">CPF or Email:</string>
     <string name="password">Password:</string>
     <string name="login">Log In</string>
     <string name="signup">Sing Up</string>
