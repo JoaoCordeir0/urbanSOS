@@ -130,7 +130,7 @@ public class NotificationHelper {
         {
             count = Integer.parseInt((Functions.getCachedNotification()).getString("count"));
         }
-        catch (JSONException e) { throw new RuntimeException(e); }
+        catch (JSONException e) { return; }
 
         if (count > 0)
         {

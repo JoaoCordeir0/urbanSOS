@@ -23,7 +23,8 @@ public class CameraReceiver implements IReceiver {
     }
 
     @Override
-    public void checkStatus() {
+    public void checkStatus()
+    {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
         {
             setStatus(ContextCompat.checkSelfPermission(mContext, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED);
@@ -50,8 +51,10 @@ public class CameraReceiver implements IReceiver {
     }
 
     @Override
-    public void requestPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+    public void requestPermission()
+    {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+        {
             ActivityCompat.requestPermissions(
                     activity,
                     new String[]{Manifest.permission.CAMERA},

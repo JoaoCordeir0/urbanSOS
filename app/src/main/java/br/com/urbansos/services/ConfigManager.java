@@ -16,14 +16,16 @@ public class ConfigManager {
         return getProperty("aws.secretKey");
     }
 
-    private static String getProperty(String key) {
+    private static String getProperty(String key)
+    {
         if (properties == null) {
             loadProperties();
         }
         return properties.getProperty(key);
     }
 
-    private static void loadProperties() {
+    private static void loadProperties()
+    {
         properties = new Properties();
         try (InputStream input = ConfigManager.class.getClassLoader().getResourceAsStream(FILE_NAME)) {
             if (input == null) {

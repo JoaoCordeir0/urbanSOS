@@ -98,7 +98,8 @@ public class CameraFragment extends Fragment {
         {
             String latitude = gps.getLatitude();
             String longitude = gps.getLongitude();
-            try {
+            try
+            {
                 // Requisição que retorna a cidade em que o usuário está usando o app.
                 Main.requestQueue.add((new Volley()).sendRequestGET("/city/latlng/" + latitude + "/" + longitude, new IVolleyCallback() {
                     @Override
@@ -150,22 +151,29 @@ public class CameraFragment extends Fragment {
                             ((Button) view.findViewById(R.id.btn_send_report)).setVisibility(View.VISIBLE);
 
                             // Intent da camera
-                            Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                            if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null)
+                            try
                             {
-                                File photoFile = null;
-                                try
+                                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                                if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null)
                                 {
-                                    photoFile = createImageFile();
-                                }
-                                catch (IOException ex) {  }
+                                    File photoFile = null;
+                                    try
+                                    {
+                                        photoFile = createImageFile();
+                                    }
+                                    catch (IOException ex) {  }
 
-                                if (photoFile != null)
-                                {
-                                    Uri photoURI = FileProvider.getUriForFile(getContext(), "br.com.urbansos", photoFile);
-                                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                                    startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+                                    if (photoFile != null)
+                                    {
+                                        Uri photoURI = FileProvider.getUriForFile(getContext(), "br.com.urbansos", photoFile);
+                                        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                                        startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+                                    }
                                 }
+                            }
+                            catch (Exception ex)
+                            {
+                                Functions.alert(getContext(), "Error", "Error when trying to open the camera. Try restarting the app", "Ok",true);
                             }
 
                             autoCompleteReportOptions = view.findViewById(R.id.select_report_options);
@@ -178,7 +186,10 @@ public class CameraFragment extends Fragment {
                     }
                 }, (Functions.getCachedAuth()).getString("token"), "address"));
             }
-            catch (JSONException e) { throw new RuntimeException(e); }
+            catch (JSONException e)
+            {
+                Functions.alert(getContext(), "Error", "App internal error!", "Ok",true);
+            }
         }
     }
 

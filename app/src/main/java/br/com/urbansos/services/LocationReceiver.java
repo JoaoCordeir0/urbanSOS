@@ -24,7 +24,8 @@ public class LocationReceiver implements IReceiver {
     }
 
     @Override
-    public void checkStatus() {
+    public void checkStatus()
+    {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
         {
             setStatus(ContextCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED);
@@ -51,8 +52,10 @@ public class LocationReceiver implements IReceiver {
     }
 
     @Override
-    public void requestPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+    public void requestPermission()
+    {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+        {
             ActivityCompat.requestPermissions(
                     activity,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},

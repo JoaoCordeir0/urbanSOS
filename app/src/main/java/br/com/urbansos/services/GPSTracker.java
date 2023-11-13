@@ -40,7 +40,8 @@ public class GPSTracker extends Service implements LocationListener, IGPS {
     @SuppressLint("MissingPermission")
     public Location getLocation()
     {
-        try {
+        try
+        {
             locationManager = (LocationManager) mContext.getSystemService(LOCATION_SERVICE);
 
             // obter o status GPS
@@ -49,10 +50,12 @@ public class GPSTracker extends Service implements LocationListener, IGPS {
             // obter o status da rede
             isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
 
-            if (isGPSEnabled && isNetworkEnabled) {
+            if (isGPSEnabled && isNetworkEnabled)
+            {
                 this.canGetLocation = true;
                 // Primeiro localização obter de provedor de rede
-                if (isNetworkEnabled) {
+                if (isNetworkEnabled)
+                {
                     locationManager.requestLocationUpdates(
                             LocationManager.NETWORK_PROVIDER,
                             MIN_TIME_BW_UPDATES,
@@ -60,17 +63,21 @@ public class GPSTracker extends Service implements LocationListener, IGPS {
                             this
                     );
                     Log.d("Network", "Network");
-                    if (locationManager != null) {
+                    if (locationManager != null)
+                    {
                         location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-                        if (location != null) {
+                        if (location != null)
+                        {
                             latitude = location.getLatitude();
                             longitude = location.getLongitude();
                         }
                     }
                 }
                 // if GPS Enabled get lat/long using GPS Services
-                if (isGPSEnabled) {
-                    if (location == null) {
+                if (isGPSEnabled)
+                {
+                    if (location == null)
+                    {
                         locationManager.requestLocationUpdates(
                                 LocationManager.GPS_PROVIDER,
                                 MIN_TIME_BW_UPDATES,
@@ -78,9 +85,11 @@ public class GPSTracker extends Service implements LocationListener, IGPS {
                                 this
                         );
                         Log.d("GPS Enabled", "GPS Enabled");
-                        if (locationManager != null) {
+                        if (locationManager != null)
+                        {
                             location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                            if (location != null) {
+                            if (location != null)
+                            {
                                 latitude = location.getLatitude();
                                 longitude = location.getLongitude();
                             }
