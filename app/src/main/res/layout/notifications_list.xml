@@ -5,13 +5,6 @@
     android:layout_height="wrap_content"
     tools:context=".fragments.HomeFragment">
 
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/card"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="7dp"
-        android:layout_marginBottom="5dp">
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -23,17 +16,30 @@
                 android:orientation="vertical"
                 android:padding="16dp">
 
-                <!-- Title, secondary and supporting text -->
+                <ImageView
+                    android:id="@+id/notification_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginTop="8dp"
+                    android:src="@drawable/in_progress"
+                    android:contentDescription="Icone left" />
+
                 <TextView
                     android:id="@+id/notification_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Card notification example"
                     android:textSize="15dp"
+                    android:layout_marginLeft="35dp"
+                    android:layout_marginTop="-35dp"
                     android:textAppearance="?attr/textAppearanceTitleMedium"/>
+
+                <com.google.android.material.divider.MaterialDivider
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp" />
 
             </LinearLayout>
         </LinearLayout>
-    </com.google.android.material.card.MaterialCardView>
-
 </FrameLayout>

@@ -58,7 +58,7 @@ public class ReportAdapter extends RecyclerView.Adapter<ReportViewHolder> {
         }
         catch (ParseException e) { throw new RuntimeException(e); }
 
-        String dateFormated = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(dt);
+        String dateFormated = new SimpleDateFormat("dd/MM/yyyy HH:mm").format(dt);
 
         holder.title.setText(report.getTitle() + " | " + report.getStatus());
         holder.description.setText(report.getDescription());

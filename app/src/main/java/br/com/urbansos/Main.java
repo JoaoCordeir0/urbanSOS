@@ -1,29 +1,22 @@
 package br.com.urbansos;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.OptIn;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.view.menu.ActionMenuItemView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ActionMenuView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import com.android.volley.RequestQueue;
 import com.google.android.material.appbar.MaterialToolbar;
-import com.google.android.material.badge.BadgeDrawable;
-import com.google.android.material.badge.BadgeUtils;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
@@ -153,10 +146,10 @@ public class Main extends AppCompatActivity {
     {
         setContentView(R.layout.main);
 
-        // Responsável por identificar os cliques nos itens da navbar e carregar o fragmento da página
-        BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
         setFragment(new HomeFragment(), "My Reports");
 
+        // Responsável por identificar os cliques nos itens da navbar e carregar o fragmento da página
+        BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
         bottomNav.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -185,13 +178,20 @@ public class Main extends AppCompatActivity {
         Toolbar topNav = findViewById(R.id.topAppBar);
         topNav.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
-            @OptIn(markerClass = com.google.android.material.badge.ExperimentalBadgeUtils.class)
             public boolean onMenuItemClick(MenuItem item) {
                 int id = item.getItemId();
 
                 if (id == R.id.fragment_notification)
                 {
                     setFragment(new NotificationFragment(), "Notifications");
+
+                    // Define um item invisível como selecionado para deselecionar todos os itens
+                    MenuItem invisibleItem = ((BottomNavigationView) findViewById(R.id.bottom_navigation)).getMenu().findItem(R.id.invisible_item);
+                    invisibleItem.setChecked(true);
+
+                    // Exibe o Badge de notificações caso tenha
+                    NotificationHelper.showBadgeNotification(findViewById(R.id.topAppBar), Main.this);
+
                     return true;
                 }
                 else if (id == R.id.action_account)

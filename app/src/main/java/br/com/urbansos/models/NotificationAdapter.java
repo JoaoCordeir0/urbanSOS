@@ -44,9 +44,14 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationViewHo
         }
         catch (ParseException e) { throw new RuntimeException(e); }
 
-        String dateFormated = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(dt);
+        String dateFormated = new SimpleDateFormat("dd/MM HH:mm").format(dt);
 
         holder.title.setText(dateFormated + " - " + notification.getTitle());
+
+        if (notification.getTitle().toLowerCase().indexOf("resolved") != -1)
+        {
+            holder.icon.setImageResource(R.drawable.resolved);
+        }
 
         setFadeAnimation(holder.itemView);
     }

@@ -27,8 +27,6 @@ import br.com.urbansos.http.Volley;
 import br.com.urbansos.interfaces.IVolleyCallback;
 import br.com.urbansos.models.Notification;
 import br.com.urbansos.models.NotificationAdapter;
-import br.com.urbansos.models.Report;
-import br.com.urbansos.models.ReportAdapter;
 
 public class NotificationFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";

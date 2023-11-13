@@ -9,10 +9,19 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Build;
+import android.view.View;
+
+import androidx.annotation.OptIn;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+
+import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.badge.BadgeDrawable;
+import com.google.android.material.badge.BadgeUtils;
+import com.google.android.material.badge.ExperimentalBadgeUtils;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import br.com.urbansos.Main;
@@ -111,5 +120,30 @@ public class NotificationHelper {
 
         // Dispara a notificação
         notificationManager.notify(this.NOTIFICATION_ID, builder.build());
+    }
+
+    @OptIn(markerClass = ExperimentalBadgeUtils.class)
+    public static void showBadgeNotification(MaterialToolbar toolbar, Context mContext)
+    {
+        int count = 0;
+        try
+        {
+            count = Integer.parseInt((Functions.getCachedNotification()).getString("count"));
+        }
+        catch (JSONException e) { throw new RuntimeException(e); }
+
+        if (count > 0)
+        {
+            MaterialToolbar materialToolbar = toolbar;
+
+            // Crie um BadgeDrawable e configure-o conforme necessário
+            BadgeDrawable badge = BadgeDrawable.create(mContext);
+            badge.setNumber(count);
+
+            // Adicione o BadgeDrawable à MaterialToolbar
+            BadgeUtils.attachBadgeDrawable(badge, materialToolbar, null);
+            badge.setHorizontalOffset(260);
+            badge.setVerticalOffset(70);
+        }
     }
 }
