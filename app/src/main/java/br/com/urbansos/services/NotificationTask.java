@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Build;
-import android.view.View;
 
 import androidx.annotation.OptIn;
 import androidx.appcompat.app.AppCompatActivity;
@@ -30,13 +29,13 @@ import br.com.urbansos.functions.Functions;
 import br.com.urbansos.http.Volley;
 import br.com.urbansos.interfaces.IVolleyCallback;
 
-public class NotificationHelper {
+public class NotificationTask {
     private final String CHANNEL_ID = "urbansos_channel";
     private final int NOTIFICATION_ID = 1;
     private Context mContext;
     private AppCompatActivity activity;
 
-    public NotificationHelper(Context mContext, AppCompatActivity activity) throws JSONException {
+    public NotificationTask(Context mContext, AppCompatActivity activity) throws JSONException {
         this.mContext = mContext;
         this.activity = activity;
 

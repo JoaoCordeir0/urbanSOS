@@ -34,7 +34,7 @@ import br.com.urbansos.interfaces.IVolleyCallback;
 import br.com.urbansos.services.CameraReceiver;
 import br.com.urbansos.services.ConnectionReceiver;
 import br.com.urbansos.services.LocationReceiver;
-import br.com.urbansos.services.NotificationHelper;
+import br.com.urbansos.services.NotificationTask;
 import br.com.urbansos.services.S3UploadTask;
 
 public class Main extends AppCompatActivity {
@@ -96,7 +96,7 @@ public class Main extends AppCompatActivity {
                     if (Functions.verifyCachedAuth())
                     {
                         // Dispara notificações de status de reports atualizados caso o usuario liberou a permissão
-                        new NotificationHelper(Main.this, Main.this);
+                        new NotificationTask(Main.this, Main.this);
 
                         screenMain(new View(getApplicationContext()));
                     }
@@ -190,7 +190,7 @@ public class Main extends AppCompatActivity {
                     invisibleItem.setChecked(true);
 
                     // Exibe o Badge de notificações caso tenha
-                    NotificationHelper.showBadgeNotification(findViewById(R.id.topAppBar), Main.this);
+                    NotificationTask.showBadgeNotification(findViewById(R.id.topAppBar), Main.this);
 
                     return true;
                 }

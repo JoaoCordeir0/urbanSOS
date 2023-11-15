@@ -100,7 +100,6 @@ public class Volley implements IRequests {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         try {
-                            System.out.println(error);
                             JSONObject response = new JSONObject();
                             response.put("message", "App internal error!");
                             callback.onError(response);
@@ -132,12 +131,14 @@ public class Volley implements IRequests {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
+                        // Nenhuma ação de retorno necessária
                         System.out.println(response);
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError err) {
+                        // Nenhuma ação de retorno necessária
                         System.out.println(err);
                     }
                 }

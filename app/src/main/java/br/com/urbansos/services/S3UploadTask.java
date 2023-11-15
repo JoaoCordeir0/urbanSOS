@@ -41,11 +41,11 @@ public class S3UploadTask extends AsyncTask<Void, Void, Void> {
             // Envia para o S3
             s3Client.putObject(putObjectRequest);
 
-            // Após o upload, exclui o arquivo localmente
-//            if (this.fileToUpload.exists())
-//            {
-//                this.fileToUpload.delete();
-//            }
+            // Após o upload, exclui o arquivo localmente - Desabilitado para poder usar a imagem do celular do usuário
+            // if (this.fileToUpload.exists())
+            // {
+            //    this.fileToUpload.delete();
+            // }
         }
         catch (AmazonServiceException e)
         {
