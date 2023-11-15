@@ -279,6 +279,13 @@ public class Main extends AppCompatActivity {
             return;
         }
 
+        // Verifica senha forte
+        if (password.length() < 8)
+        {
+            Functions.alert(Main.this, "Warning", "Use a password with at least 8 characters!", "Try again",true);
+            return;
+        }
+
         // Verifica se as senhas estão iguais
         if (!(password.equals(password_confirm)))
         {
