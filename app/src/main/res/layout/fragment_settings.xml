@@ -8,7 +8,8 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
         <Button
             style="@style/Widget.Material3.Button.ElevatedButton.Icon"
             android:id="@+id/btn_account"
@@ -21,18 +22,13 @@
             android:layout_marginRight="5dp"
             app:icon="@drawable/account" />
 
-    </LinearLayout>
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            app:dividerInsetStart="5dp"
+            app:dividerInsetEnd="5dp"/>
 
-    <com.google.android.material.divider.MaterialDivider
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="80dp"
-        app:dividerInsetStart="5dp"
-        app:dividerInsetEnd="5dp"/>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
         <Button
             style="@style/Widget.Material3.Button.ElevatedButton.Icon"
             android:id="@+id/btn_theme"
@@ -40,16 +36,11 @@
             android:layout_height="60dp"
             android:text="Change theme"
             android:textStyle="bold"
-            android:layout_marginTop="100dp"
+            android:layout_marginTop="10dp"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
             app:icon="@drawable/theme" />
 
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
         <Button
             style="@style/Widget.Material3.Button.ElevatedButton.Icon"
             android:id="@+id/btn_permissions"
@@ -57,16 +48,11 @@
             android:layout_height="60dp"
             android:text="Permissions"
             android:textStyle="bold"
-            android:layout_marginTop="165dp"
+            android:layout_marginTop="5dp"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
             app:icon="@drawable/lock" />
 
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
         <Button
             style="@style/Widget.Material3.Button.ElevatedButton.Icon"
             android:id="@+id/btn_suport"
@@ -74,16 +60,11 @@
             android:layout_height="60dp"
             android:text="Support"
             android:textStyle="bold"
-            android:layout_marginTop="230dp"
+            android:layout_marginTop="5dp"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
             app:icon="@drawable/support" />
 
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
         <Button
             style="@style/Widget.Material3.Button.ElevatedButton.Icon"
             android:id="@+id/btn_logout"
@@ -92,11 +73,10 @@
             android:layout_height="60dp"
             android:text="Log out"
             android:textStyle="bold"
-            android:layout_marginTop="295dp"
+            android:layout_marginTop="5dp"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
             app:icon="@drawable/logout" />
-
     </LinearLayout>
 
 </FrameLayout>
