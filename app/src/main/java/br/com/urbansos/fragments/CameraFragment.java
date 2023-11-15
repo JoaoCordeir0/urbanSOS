@@ -205,7 +205,7 @@ public class CameraFragment extends Fragment {
         return image;
     }
 
-    private Bitmap rotateBitmap(Bitmap bitmap, int orientation) {
+    public static Bitmap rotateBitmap(Bitmap bitmap, int orientation) {
         Matrix matrix = new Matrix();
         switch (orientation) {
             case ExifInterface.ORIENTATION_ROTATE_90:
@@ -233,14 +233,14 @@ public class CameraFragment extends Fragment {
 
             Bitmap bitmap = BitmapFactory.decodeFile(currentPhotoPath);
 
-            try {
+            try
+            {
                 ExifInterface exifInterface = new ExifInterface(currentPhotoPath);
                 int orientation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED);
 
                 bitmap = rotateBitmap(bitmap, orientation);
-            } catch (IOException e) {
-                e.printStackTrace();
             }
+            catch (IOException e) { e.printStackTrace(); }
 
             report_image.setImageBitmap(bitmap);
             report_image.setVisibility(View.VISIBLE);

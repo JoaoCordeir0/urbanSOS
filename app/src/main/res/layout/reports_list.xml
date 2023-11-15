@@ -6,7 +6,7 @@
     tools:context=".fragments.HomeFragment">
 
     <com.google.android.material.card.MaterialCardView
-        android:id="@+id/card"
+        android:id="@+id/card_report"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="7dp"
@@ -23,33 +23,39 @@
                 android:orientation="vertical"
                 android:padding="16dp">
 
-                <!-- Title, secondary and supporting text -->
                 <TextView
                     android:id="@+id/report_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Card report example"
                     android:textSize="18dp"
-                    android:textColor="@color/md_theme_light_success"
                     android:textAppearance="?attr/textAppearanceTitleMedium"/>
 
-                <TextView
-                    android:id="@+id/report_date"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="24/09/2023"
-                    android:textAppearance="?attr/textAppearanceBodyMedium"
-                    android:textColor="?android:attr/textColorSecondary"/>
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="5dp" >
 
-                <TextView
-                    android:id="@+id/report_description"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Text card example"
-                    android:layout_marginTop="5dp"
-                    android:textAppearance="?attr/textAppearanceBodyMedium"
-                    android:textColor="?android:attr/textColorSecondary"/>
+                    <TextView
+                        android:id="@+id/report_status"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Status: In progress"
+                        android:layout_marginTop="5dp"
+                        android:textAppearance="?attr/textAppearanceBodyMedium"
+                        android:textColor="?android:attr/textColorSecondary"/>
+
+                    <TextView
+                        android:id="@+id/report_date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:text="Created in: 24/09/2023"
+                        android:textAppearance="?attr/textAppearanceBodyMedium"
+                        android:textColor="?android:attr/textColorSecondary" />
+                </LinearLayout>
 
             </LinearLayout>
         </LinearLayout>

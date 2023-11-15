@@ -365,7 +365,7 @@ public class Main extends AppCompatActivity {
     }
 
     public void sendReport(View view) throws JSONException, UnknownHostException {
-        String image = (Functions.getCachedPhoto()).getString("Photo");
+        String image = (Functions.getCachedPhoto()).getString("photo");
         String title = String.valueOf(((TextInputLayout) findViewById(R.id.input_report_title)).getEditText().getText());
         String description = String.valueOf(((TextInputLayout) findViewById(R.id.input_report_description)).getEditText().getText());
         String situation = String.valueOf(((TextInputLayout) findViewById(R.id.input_select_level)).getEditText().getText());
@@ -395,10 +395,8 @@ public class Main extends AppCompatActivity {
         ));
 
         // Inicia o upload em segundo plano da imagem para o AWS S3
-        S3UploadTask s3 = new S3UploadTask(image, (Functions.getCachedPhoto()).getString("PathPhoto"));
+        S3UploadTask s3 = new S3UploadTask(image, (Functions.getCachedPhoto()).getString("pathPhoto"));
         s3.execute();
-
-        Functions.cleanCachedPhoto(); // Limpa o chache do path e nome da imagem
 
         Functions.alert(Main.this, "Successfully", "We are sending your report. Thank you for helping maintain the city!", "Ok", true);
 

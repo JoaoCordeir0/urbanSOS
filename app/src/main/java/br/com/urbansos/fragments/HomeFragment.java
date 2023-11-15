@@ -99,6 +99,7 @@ public class HomeFragment extends Fragment {
                     {
                         JSONObject r = response.getJSONObject("report" + c);
                         itens.add(new Report(
+                                Integer.parseInt(r.getString("id")),
                                 r.getString("title"),
                                 r.getString("description"),
                                 r.getString("createdAt"),

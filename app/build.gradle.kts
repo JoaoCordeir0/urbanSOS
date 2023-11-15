@@ -37,4 +37,5 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     implementation("com.android.volley:volley:1.2.1")
     implementation("com.amazonaws:aws-android-sdk-s3:2.23.0")
+    implementation("com.github.bumptech.glide:glide:4.16.0")
 }

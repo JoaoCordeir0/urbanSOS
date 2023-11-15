@@ -157,18 +157,20 @@ public class Functions {
     }
 
     public static JSONObject getCachedPhoto() throws JSONException {
+        String path = "";
         String path_photo = "";
         String photo = "";
         try {
             path_photo = Main.prefsPhoto.getString("PathPhoto", null);
             String[] photo_array = path_photo.split("/");
             photo = photo_array[photo_array.length - 1];
-        } catch (Exception ex) {
-        }
+            path = path_photo.replace(photo, "");
+        } catch (Exception ex) { }
 
         JSONObject data = new JSONObject();
-        data.put("PathPhoto", path_photo);
-        data.put("Photo", photo);
+        data.put("path", path);
+        data.put("pathPhoto", path_photo);
+        data.put("photo", photo);
 
         return data;
     }
