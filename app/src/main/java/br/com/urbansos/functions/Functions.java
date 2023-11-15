@@ -36,6 +36,7 @@ import java.util.regex.Pattern;
 
 import br.com.urbansos.Main;
 import br.com.urbansos.R;
+import br.com.urbansos.models.User;
 
 public class Functions {
     public static JSONObject getParamsLogin(String username, String password) throws JSONException {
@@ -77,9 +78,16 @@ public class Functions {
     }
 
     public static boolean validateLogin(JSONObject response, Boolean rememberme) throws JSONException {
-        JSONObject user = response.getJSONObject("user");
+        JSONObject jsonUser = response.getJSONObject("user");
 
-        if (user.getString("status").equals("1")) {
+        if (jsonUser.getString("status").equals("1")) {
+            User user = new User(Integer.parseInt(
+                    jsonUser.getString("id")),
+                    jsonUser.getString("name"),
+                    jsonUser.getString("email"),
+                    jsonUser.getString("cpf")
+            );
+
             // Salva a autenticação do usuário em cache caso o usuário escolher ser lembrado
             Functions.setCachedAuth(response, user, rememberme);
 
@@ -107,7 +115,7 @@ public class Functions {
         return false;
     }
 
-    public static void setCachedAuth(JSONObject response, JSONObject user, boolean rememberme) throws JSONException {
+    public static void setCachedAuth(JSONObject response, User user, boolean rememberme) throws JSONException {
         Functions.cleanCachedAuth();
 
         SharedPreferences.Editor editor = Main.prefsAuth.edit();
@@ -116,10 +124,10 @@ public class Functions {
             editor.putString("tokenDate", Functions.getDate());
 
         editor.putString("token", response.getString("access_token"));
-        editor.putString("UserID", user.getString("id"));
-        editor.putString("UserName", user.getString("name"));
-        editor.putString("UserEmail", user.getString("email"));
-        editor.putString("UserCpf", user.getString("cpf"));
+        editor.putString("UserID", String.valueOf(user.getId()));
+        editor.putString("UserName", user.getName());
+        editor.putString("UserEmail", user.getEmail());
+        editor.putString("UserCpf", user.getCpf());
 
         editor.apply();
     }
