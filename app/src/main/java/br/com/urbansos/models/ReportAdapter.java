@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.media.ExifInterface;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,11 +17,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.google.android.material.card.MaterialCardView;
+import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 
 import org.json.JSONException;
@@ -96,6 +101,7 @@ public class ReportAdapter extends RecyclerView.Adapter<ReportViewHolder> {
                 View dialogView = LayoutInflater.from(view.getContext()).inflate(R.layout.popup_report, null);
 
                 // Configura os elementos de interface do usuário no layout personalizado
+                CircularProgressIndicator preloader = dialogView.findViewById(R.id.progressindicator_popup_reports);
                 ImageView dialogImg = dialogView.findViewById(R.id.popup_img_report);
                 TextView dialogTitle = dialogView.findViewById(R.id.popup_title_report);
                 TextView dialogDescription = dialogView.findViewById(R.id.popup_description_report);
@@ -125,14 +131,23 @@ public class ReportAdapter extends RecyclerView.Adapter<ReportViewHolder> {
                     catch (IOException e) { }
 
                     int orientation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED);
+
                     dialogImg.setImageBitmap(CameraFragment.rotateBitmap(bitmap, orientation));
                 }
                 else
                 {
                     Glide.with(view.getContext())
+                            .asBitmap()
                             .load("https://s3.sa-east-1.amazonaws.com/urbansos.images/" + report.getImage())
-                            .error(R.drawable.warning)
-                            .into(dialogImg);
+                            .into(new CustomTarget<Bitmap>() {
+                                @Override
+                                public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                                    preloader.setVisibility(View.INVISIBLE);
+                                    dialogImg.setImageBitmap(resource);
+                                }
+                                @Override
+                                public void onLoadCleared(@Nullable Drawable placeholder) { }
+                            });
                 }
 
                 dialogTitle.setText("Title: " + report.getTitle());
