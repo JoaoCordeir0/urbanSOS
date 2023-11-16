@@ -334,7 +334,7 @@ public class Functions {
             String cpf = data.getString("cpf");
             String email = data.getString("email");
 
-            String token = new String(Base64.getEncoder().encode((name + ":" + cpf + ":" + email).getBytes()));
+            String token = (new String(Base64.getEncoder().encode((name + ":" + cpf + ":" + email).getBytes()))).replaceAll("/", "%2F");
 
             url = "https://urbansos.com.br/auth/" + id + "/" + token;
         }
