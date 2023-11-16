@@ -98,11 +98,11 @@ public class Functions {
 
     public static boolean verifyCachedAuth() throws ParseException, Exception {
 
-        String token = Main.prefsAuth.getString("token", null);
+        String token = Main.prefsAuth.getString("UserToken", null);
 
         DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 
-        Date d1 = df.parse(Main.prefsAuth.getString("tokenDate", null));
+        Date d1 = df.parse(Main.prefsAuth.getString("UserTokenDate", null));
         Date d2 = df.parse(Functions.getDate());
 
         long dt = (d2.getTime() - d1.getTime());
@@ -121,9 +121,9 @@ public class Functions {
         SharedPreferences.Editor editor = Main.prefsAuth.edit();
 
         if (rememberme)
-            editor.putString("tokenDate", Functions.getDate());
+            editor.putString("UserTokenDate", Functions.getDate());
 
-        editor.putString("token", response.getString("access_token"));
+        editor.putString("UserToken", response.getString("access_token"));
         editor.putString("UserID", String.valueOf(user.getId()));
         editor.putString("UserName", user.getName());
         editor.putString("UserEmail", user.getEmail());
@@ -134,7 +134,7 @@ public class Functions {
 
     public static JSONObject getCachedAuth() throws JSONException {
         JSONObject data = new JSONObject();
-        data.put("token", Main.prefsAuth.getString("token", null));
+        data.put("token", Main.prefsAuth.getString("UserToken", null));
         data.put("id", Main.prefsAuth.getString("UserID", null));
         data.put("name", Main.prefsAuth.getString("UserName", null));
         data.put("email", Main.prefsAuth.getString("UserEmail", null));
@@ -324,11 +324,13 @@ public class Functions {
 
     public static void browseTo(Context context) {
         String url = null;
-        try {
-            url = "https://urbansos.com.br/user/" + (Functions.getCachedAuth()).getString("id");
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
+        try
+        {
+            String id = (Functions.getCachedAuth()).getString("id");
+            String token = (Functions.getCachedAuth()).getString("token").replaceAll("/", "%2F");
+            url = "https://urbansos.com.br/auth/" + id + "/" + token;
         }
+        catch (JSONException e) { }
 
         Intent i = new Intent(Intent.ACTION_VIEW);
         i.setData(Uri.parse(url));
