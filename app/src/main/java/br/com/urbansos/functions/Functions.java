@@ -13,6 +13,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.view.ContextThemeWrapper;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -27,6 +28,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.InputMismatchException;
@@ -127,7 +129,7 @@ public class Functions {
         editor.putString("UserID", String.valueOf(user.getId()));
         editor.putString("UserName", user.getName());
         editor.putString("UserEmail", user.getEmail());
-        editor.putString("UserCpf", user.getCpf());
+        editor.putString("UserCPF", user.getCpf());
 
         editor.apply();
     }
@@ -326,14 +328,26 @@ public class Functions {
         String url = null;
         try
         {
-            String id = (Functions.getCachedAuth()).getString("id");
-            String token = (Functions.getCachedAuth()).getString("token").replaceAll("/", "%2F");
+            JSONObject data = Functions.getCachedAuth();
+            String id = data.getString("id");
+            String name = data.getString("name");
+            String cpf = data.getString("cpf");
+            String email = data.getString("email");
+
+            String token = new String(Base64.getEncoder().encode((name + ":" + cpf + ":" + email).getBytes()));
+
             url = "https://urbansos.com.br/auth/" + id + "/" + token;
         }
-        catch (JSONException e) { }
+        catch (JSONException e) 
+        {
+            Toast.makeText(context, "Error generating your token", Toast.LENGTH_SHORT).show();
+        }
 
-        Intent i = new Intent(Intent.ACTION_VIEW);
-        i.setData(Uri.parse(url));
-        context.startActivity(i);
+        if (url != null)
+        {
+            Intent i = new Intent(Intent.ACTION_VIEW);
+            i.setData(Uri.parse(url));
+            context.startActivity(i);
+        }
     }
 }
