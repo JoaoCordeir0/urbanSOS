@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.media.ExifInterface;
+import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -111,14 +112,8 @@ public class ReportAdapter extends RecyclerView.Adapter<ReportViewHolder> {
                 Button btnDialogClose = dialogView.findViewById(R.id.popup_btn_close);
 
                 // Tenta pegar a imagem do celular do usuario, caso não encontre, pega do servidor AWS S3
-                String pathImagesApp = "";
-                String imgPath = "";
-                try
-                {
-                    pathImagesApp = (Functions.getCachedPhoto()).getString("path");
-                    imgPath = pathImagesApp + report.getImage();
-                }
-                catch (JSONException e) { }
+                File storageDir = view.getContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+                String imgPath = storageDir + "/" + report.getImage();
 
                 if ((new File(imgPath)).exists())
                 {

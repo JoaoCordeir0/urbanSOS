@@ -405,6 +405,9 @@ public class Main extends AppCompatActivity {
         S3UploadTask s3 = new S3UploadTask(image, (Functions.getCachedPhoto()).getString("pathPhoto"));
         s3.execute();
 
+        // Limpa o cache do caminho da imagem
+        Functions.cleanCachedPhoto();
+
         Functions.alert(Main.this, "Successfully", "We are sending your report. Thank you for helping maintain the city!", "Ok", true);
 
         setFragment(new HomeFragment(), "My Reports");
